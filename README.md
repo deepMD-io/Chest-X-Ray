@@ -1,9 +1,9 @@
-** Step 1
+### Step 1
 in ./
 conda env create environment.yml
 conda activate chexpert
 
-** Step 2
+### Step 2
 in ./data/
 unzip CheXpert-v1.0-small.zip, then ./data/ should be like this:
 ./data/ train/
@@ -11,7 +11,7 @@ unzip CheXpert-v1.0-small.zip, then ./data/ should be like this:
 		train.csv
 		valid.csv
 
-** Step 3
+### Step 3
 in ./code/
 run datasplit.py, add train, valid, test datasets into ./data/:
 ./data/ train/
@@ -24,7 +24,7 @@ run datasplit.py, add train, valid, test datasets into ./data/:
 
 it also fillna(0) for 14 labels 
 
-** Step 4
+### Step 4
 in ./code/
 modify the data path in train.py if not the same with above
 run train.py
