@@ -12,7 +12,7 @@ import torchvision
 import torchvision.transforms as transforms
 
 from utils import train, evaluate
-from plots import plot_learning_curves
+from plots import plot_learning_curves, plot_confusion_matrix
 from dataset import CheXpertDataSet
 from models import DenseNet121
 from sklearn.metrics import roc_auc_score
