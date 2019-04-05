@@ -109,7 +109,7 @@ plot_learning_curves(train_losses, valid_losses)#, train_accuracies, valid_accur
 
 # load best model
 best_model = torch.load(os.path.join(PATH_OUTPUT, "MyCNN.pth"))
-test_loss, test_accuracy, test_results = evaluate(best_model, device, test_loader, criterion)
+test_loss, test_results = evaluate(best_model, device, test_loader, criterion)
 
 # plot confusion matrix 
 class_names = ['Positive', 'Negative', 'Uncertain']
