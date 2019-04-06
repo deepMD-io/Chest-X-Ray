@@ -34,6 +34,8 @@ def plot_confusion_matrix(results, class_names, label_id, label_name):
 	image_path = os.path.join(PATH_OUTPUT, 'Confusion_Matrix_'+label_name+'.png')
 
 	y_true, y_pred = zip(*results)
+	y_true = np.array(y_true)
+	y_pred = np.array(y_pred)
 	y_true = y_true[:,label_id]
 	y_pred = y_pred[:,label_id]
 	# Compute confusion matrix
@@ -70,6 +72,4 @@ def plot_confusion_matrix(results, class_names, label_id, label_name):
 	fig.tight_layout()
 
 	plt.savefig(image_path)
-
-
 
