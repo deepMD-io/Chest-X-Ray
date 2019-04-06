@@ -12,7 +12,7 @@ import torchvision
 import torchvision.transforms as transforms
 
 from utils import train, evaluate
-from plots import plot_learning_curves, plot_confusion_matrix
+from plots import plot_learning_curves, plot_confusion_matrix, plot_roc
 from dataset import CheXpertDataSet
 from models import DenseNet121
 from scipy.special import softmax
@@ -110,16 +110,14 @@ plot_learning_curves(train_losses, valid_losses)#, train_accuracies, valid_accur
 
 # load best model
 best_model = torch.load(os.path.join(PATH_OUTPUT, "MyCNN.pth"))
-test_loss, test_results = evaluate(best_model, device, test_loader, criterion)
+#test_loss, test_results = evaluate(best_model, device, test_loader, criterion)
 
 # plot confusion matrix 
 class_names = ['Negative', 'Positive', 'Uncertain']
 label_names = [ 'No Finding', 'Enlarged Cardiomediastinum', 'Cardiomegaly', 'Lung Opacity', 'Lung Lesion', 'Edema', 'Consolidation',
                 'Pneumonia', 'Atelectasis', 'Pneumothorax', 'Pleural Effusion', 'Pleural Other', 'Fracture', 'Support Devices']
-for i, label_name in enumerate(label_names): # i th observation
-    plot_confusion_matrix(test_results, class_names, i, label_name)
-
-
+#for i, label_name in enumerate(label_names): # i th observation
+#    plot_confusion_matrix(test_results, class_names, i, label_name)
 
 
 # convert output to positive probability
