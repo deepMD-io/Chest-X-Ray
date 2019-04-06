@@ -23,8 +23,8 @@ torch.manual_seed(0)
 if torch.cuda.is_available():
     torch.cuda.manual_seed(0)
 
-PATH_DIR = '/ezdh/data'
-PATH_TEST = '/ezdh/data/CheXpert-v1.0-small/data_test.csv'
+PATH_DIR = '../data'
+PATH_TEST = '../data/CheXpert-v1.0-small/data_test.csv'
 PATH_OUTPUT = "../output/"
 os.makedirs(PATH_OUTPUT, exist_ok=True)
 
