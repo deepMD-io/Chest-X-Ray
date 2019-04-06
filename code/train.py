@@ -64,7 +64,7 @@ print('Data Loaded')
 model = DenseNet121(num_labels)
 # mean of nn.CrossEntropyLoss() on each label, where nn.CrossEntropyLoss() include softmax & cross entropy, it is faster and stabler than cross entropy
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters())
+optimizer = optim.Adam(model.parameters(), lr=1e-4)
 
 if torch.cuda.device_count() > 1:
     print("Use", torch.cuda.device_count(), "GPUs")
