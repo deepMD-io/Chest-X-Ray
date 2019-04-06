@@ -15,6 +15,7 @@ from utils import train, evaluate
 from plots import plot_learning_curves, plot_confusion_matrix
 from dataset import CheXpertDataSet
 from models import DenseNet121
+from scipy.special import softmax
 from sklearn.metrics import roc_auc_score
 
 cudnn.benchmark = True
@@ -112,10 +113,43 @@ best_model = torch.load(os.path.join(PATH_OUTPUT, "MyCNN.pth"))
 test_loss, test_results = evaluate(best_model, device, test_loader, criterion)
 
 # plot confusion matrix 
-class_names = ['Positive', 'Negative', 'Uncertain']
-label_names = [ 'Atelectasis', 'Cardiomegaly', 'Effusion', 'Infiltration', 'Mass', 'Nodule', 'Pneumonia',
-                'Pneumothorax', 'Consolidation', 'Edema', 'Emphysema', 'Fibrosis', 'Pleural_Thickening', 'Hernia']
+class_names = ['Negative', 'Positive', 'Uncertain']
+label_names = [ 'No Finding', 'Enlarged Cardiomediastinum', 'Cardiomegaly', 'Lung Opacity', 'Lung Lesion', 'Edema', 'Consolidation',
+                'Pneumonia', 'Atelectasis', 'Pneumothorax', 'Pleural Effusion', 'Pleural Other', 'Fracture', 'Support Devices']
 for i, label_name in enumerate(label_names): # i th observation
     plot_confusion_matrix(test_results, class_names, i, label_name)
 
+
+
+
+# convert output to positive probability
+def predict_positive(model, device, data_loader):
+    model.eval()
+    # return a List of probabilities
+    #input, target = zip(*data_loader)
+
+    probas = np.array([])
+    targets = np.array([])
+    with torch.no_grad():
+        for i, (input, target) in enumerate(data_loader):
+            if isinstance(input, tuple):
+                input = tuple([e.to(device) if type(e) == torch.Tensor else e for e in input])
+            else:
+                input = input.to(device)
+            target = target.detach().to('cpu').numpy()
+            targets = np.concatenate((targets, target), axis=0) if len(targets) > 0 else target
+            #target = target.to(device)
+
+            output = model(input) # num_batch x 14 x 3
+            y_pred = output.detach().to('cpu').numpy()
+            y_pred = y_pred[:,:,:2] # drop uncertain
+            y_pred = softmax(y_pred, axis = -1)
+            y_pred = y_pred[:,:,1] # keep positive only
+
+            probas = np.concatenate((probas, y_pred), axis=0) if len(probas) > 0 else y_pred
+    
+    return targets, probas
+
+test_targets, test_probs = predict_positive(best_model, device, test_loader)
+plot_roc(test_targets, test_probs, label_names)
 

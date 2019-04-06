@@ -65,8 +65,8 @@ best_model = torch.load(PATH_MODEL)
 #test_results = getprob(best_model, device, test_loader)
 
 class_names = ['Negative', 'Positive', 'Uncertain']
-label_names = [ 'Atelectasis', 'Cardiomegaly', 'Effusion', 'Infiltration', 'Mass', 'Nodule', 'Pneumonia',
-                'Pneumothorax', 'Consolidation', 'Edema', 'Emphysema', 'Fibrosis', 'Pleural_Thickening', 'Hernia']
+label_names = [ 'No Finding', 'Enlarged Cardiomediastinum', 'Cardiomegaly', 'Lung Opacity', 'Lung Lesion', 'Edema', 'Consolidation',
+                'Pneumonia', 'Atelectasis', 'Pneumothorax', 'Pleural Effusion', 'Pleural Other', 'Fracture', 'Support Devices']
 
 #best_model_prob = torch.nn.Sequential(best_model, nn.Softmax(dim = -1))
 # convert output to positive probability

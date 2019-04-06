@@ -66,8 +66,8 @@ test_loss, test_results = evaluate(best_model, device, test_loader, criterion)
 
 # plot confusion matrix 
 class_names = ['Negative', 'Positive', 'Uncertain']
-label_names = [ 'Atelectasis', 'Cardiomegaly', 'Effusion', 'Infiltration', 'Mass', 'Nodule', 'Pneumonia',
-                'Pneumothorax', 'Consolidation', 'Edema', 'Emphysema', 'Fibrosis', 'Pleural_Thickening', 'Hernia']
+label_names = [ 'No Finding', 'Enlarged Cardiomediastinum', 'Cardiomegaly', 'Lung Opacity', 'Lung Lesion', 'Edema', 'Consolidation',
+                'Pneumonia', 'Atelectasis', 'Pneumothorax', 'Pleural Effusion', 'Pleural Other', 'Fracture', 'Support Devices']
 for i, label_name in enumerate(label_names): # i th observation
     plot_confusion_matrix(test_results, class_names, i, label_name)
 
