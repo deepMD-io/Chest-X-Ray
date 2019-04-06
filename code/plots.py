@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 # TODO: You can use other packages if you want, e.g., Numpy, Scikit-learn, etc.
 import numpy as np
 import os
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, roc_curve, auc
 from sklearn.utils.multiclass import unique_labels
 
 def plot_learning_curves(train_losses, valid_losses):#, train_accuracies, valid_accuracies):
@@ -72,4 +72,40 @@ def plot_confusion_matrix(results, class_names, label_id, label_name):
 	fig.tight_layout()
 
 	plt.savefig(image_path)
+
+def plot_roc(targets, probs, label_names):
+	PATH_OUTPUT = '../output/'
+	fpr = dict()
+	tpr = dict()
+	roc_auc = dict()
+	for i, label_name in enumerate(label_names): # i th observation
+		image_path = os.path.join(PATH_OUTPUT, 'ROC_'+label_name+'.png')
+		y_true = targets[:,i]
+		y_score = probs[:,i]
+
+		# drop uncertain
+		iwant = y_true < 2
+		y_true = y_true[iwant]
+		y_score = y_score[iwant]	
+		
+		fpr[i], tpr[i], _ = roc_curve(y_true, y_score)
+		roc_auc[i] = auc(fpr[i], tpr[i])
+
+		
+		plt.figure()
+		lw = 2
+		plt.plot(fpr[i], tpr[i], color='black',
+		         lw=lw, label='ROC curve (area = %0.2f)' % roc_auc[i])
+		plt.xlim([0.0, 1.0])
+		plt.ylim([0.0, 1.05])
+		plt.xlabel('False Positive Rate')
+		plt.ylabel('True Positive Rate')
+		plt.title(label_name)
+		plt.legend(loc="lower right")
+		plt.tight_layout()
+		plt.savefig(image_path)
+
+	# Compute micro-average ROC curve and ROC area
+	fpr["micro"], tpr["micro"], _ = roc_curve(y_true.ravel(), y_score.ravel())
+	roc_auc["micro"] = auc(fpr["micro"], tpr["micro"])
 

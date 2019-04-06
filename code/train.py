@@ -118,5 +118,4 @@ label_names = [ 'Atelectasis', 'Cardiomegaly', 'Effusion', 'Infiltration', 'Mass
 for i, label_name in enumerate(label_names): # i th observation
     plot_confusion_matrix(test_results, class_names, i, label_name)
 
-#best_model_prob = torch.nn.Sequential(best_model, nn.Softmax(dim = -1))
 

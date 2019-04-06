@@ -11,11 +11,11 @@ import torch.backends.cudnn as cudnn
 import torchvision
 import torchvision.transforms as transforms
 
-from utils import train, evaluate
-from plots import plot_learning_curves, plot_confusion_matrix
+from utils import train, evaluate#, getprob
+from plots import plot_learning_curves, plot_confusion_matrix, plot_roc
 from dataset import CheXpertDataSet
 from models import DenseNet121
-from sklearn.metrics import roc_auc_score
+from scipy.special import softmax
 
 cudnn.benchmark = True
 
@@ -23,8 +23,8 @@ torch.manual_seed(0)
 if torch.cuda.is_available():
     torch.cuda.manual_seed(0)
 
-PATH_DIR = '/ezdh/data'
-PATH_TEST = '/ezdh/data/CheXpert-v1.0-small/data_test.csv'
+PATH_DIR = '../data'
+PATH_TEST = '../data/CheXpert-v1.0-small/data_test.csv'
 PATH_OUTPUT = "../output/"
 os.makedirs(PATH_OUTPUT, exist_ok=True)
 
@@ -62,14 +62,45 @@ criterion.to(device)
 # load best model
 PATH_MODEL = os.path.join(PATH_OUTPUT, "MyCNN.pth")
 best_model = torch.load(PATH_MODEL)
-test_loss, test_results = evaluate(best_model, device, test_loader, criterion)
+#test_results = getprob(best_model, device, test_loader)
 
-# plot confusion matrix 
 class_names = ['Negative', 'Positive', 'Uncertain']
 label_names = [ 'Atelectasis', 'Cardiomegaly', 'Effusion', 'Infiltration', 'Mass', 'Nodule', 'Pneumonia',
                 'Pneumothorax', 'Consolidation', 'Edema', 'Emphysema', 'Fibrosis', 'Pleural_Thickening', 'Hernia']
-for i, label_name in enumerate(label_names): # i th observation
-    plot_confusion_matrix(test_results, class_names, i, label_name)
+
+#best_model_prob = torch.nn.Sequential(best_model, nn.Softmax(dim = -1))
+# convert output to positive probability
+def predict_positive(model, device, data_loader):
+    model.eval()
+    # return a List of probabilities
+    #input, target = zip(*data_loader)
+
+    probas = np.array([])
+    targets = np.array([])
+    with torch.no_grad():
+        for i, (input, target) in enumerate(data_loader):
+            if isinstance(input, tuple):
+                input = tuple([e.to(device) if type(e) == torch.Tensor else e for e in input])
+            else:
+                input = input.to(device)
+            target = target.detach().to('cpu').numpy()
+            targets = np.concatenate((targets, target), axis=0) if len(targets) > 0 else target
+            #target = target.to(device)
+
+            output = model(input) # num_batch x 14 x 3
+            y_pred = output.detach().to('cpu').numpy()
+            y_pred = y_pred[:,:,:2] # drop uncertain
+            y_pred = softmax(y_pred, axis = -1)
+            y_pred = y_pred[:,:,1] # keep positive only
+
+            probas = np.concatenate((probas, y_pred), axis=0) if len(probas) > 0 else y_pred
+    
+    return targets, probas
+
+test_targets, test_probs = predict_positive(best_model, device, test_loader)
+#print(test_targets)
+
+plot_roc(test_targets, test_probs, label_names)
 
 #best_model_prob = torch.nn.Sequential(best_model, nn.Softmax(dim = -1))
 
