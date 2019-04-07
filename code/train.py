@@ -32,7 +32,7 @@ PATH_OUTPUT = "../output/"
 os.makedirs(PATH_OUTPUT, exist_ok=True)
 MODEL_OUTPUT = 'model.pth.tar'
 
-NUM_EPOCHS = 6
+NUM_EPOCHS = 4
 BATCH_SIZE = 32 # 32 is the max for our memory limitation
 USE_CUDA = True  # Set 'True' if you want to use GPU
 NUM_WORKERS = 8
@@ -65,6 +65,8 @@ model = DenseNet121(num_labels)
 # mean of nn.CrossEntropyLoss() on each label, where nn.CrossEntropyLoss() include softmax & cross entropy, it is faster and stabler than cross entropy
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=1e-4)
+scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=0.1)
+
 
 if torch.cuda.device_count() > 1:
     print("Use", torch.cuda.device_count(), "GPUs")
@@ -80,19 +82,19 @@ if os.path.isfile(PATH_MODEL):
     print('Saved model loaded')
 
 # train
-#best_val_acc = 0.0
 best_val_loss = 1000000
 train_losses = []
 valid_losses = []
 for epoch in range(NUM_EPOCHS):
+    scheduler.step() # no decay in the first step
+    print('Learning rate in epoch:', epoch)
+    for param_group in optimizer.param_groups:
+        print(param_group['lr'])
     train_loss = train(model, device, train_loader, criterion, optimizer, epoch)
     valid_loss, valid_results = evaluate(model, device, valid_loader, criterion)
     train_losses.append(train_loss)
     valid_losses.append(valid_loss)
-    #train_accuracies.append(train_accuracy)
-    #valid_accuracies.append(valid_accuracy)
 
-    #is_best = valid_accuracy > best_val_acc  # let's keep the model that has the best accuracy, but you can also use another metric.
     is_best = valid_loss < best_val_loss  # let's keep the model that has the best loss, but you can also use another metric.
     if is_best:
         best_val_loss = valid_loss
