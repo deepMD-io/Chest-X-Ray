@@ -32,8 +32,8 @@ PATH_OUTPUT = "../output/"
 os.makedirs(PATH_OUTPUT, exist_ok=True)
 MODEL_OUTPUT = 'model.pth.tar'
 
-NUM_EPOCHS = 4
-BATCH_SIZE = 32 # 32 is the max for our memory limitation
+NUM_EPOCHS = 6
+BATCH_SIZE = 32 # 32 is max for 224x224, 16 is max for 320x320, 280x280
 USE_CUDA = True  # Set 'True' if you want to use GPU
 NUM_WORKERS = 8
 num_labels = 14
@@ -44,8 +44,12 @@ normalize = transforms.Normalize([0.485, 0.456, 0.406],
                                  [0.229, 0.224, 0.225])
 
 transformseq=transforms.Compose([
+                                    #transforms.Resize(size=(320, 320)),
                                     transforms.Resize(256),
-                                    transforms.RandomResizedCrop(224),
+                                    #transforms.RandomResizedCrop(224),
+                                    transforms.CenterCrop(224),
+                                    #transforms.CenterCrop(280),
+                                    #transforms.CenterCrop(320), # padding
                                     transforms.RandomHorizontalFlip(),
                                     transforms.ToTensor(),
                                     normalize
@@ -86,7 +90,7 @@ best_val_loss = 1000000
 train_losses = []
 valid_losses = []
 for epoch in range(NUM_EPOCHS):
-    scheduler.step() # no decay in the first step
+    #scheduler.step() # no decay in the first step
     print('Learning rate in epoch:', epoch)
     for param_group in optimizer.param_groups:
         print(param_group['lr'])
@@ -152,4 +156,3 @@ def predict_positive(model, device, data_loader):
 
 test_targets, test_probs = predict_positive(best_model, device, test_loader)
 plot_roc(test_targets, test_probs, label_names)
-
