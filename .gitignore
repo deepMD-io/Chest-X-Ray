@@ -6,4 +6,5 @@
 *.tex
 CheXpert-v1.0-small/train/
 CheXpert-v1.0-small/valid/
+output_224ccrop_dense121_lr-4_e6/
 
