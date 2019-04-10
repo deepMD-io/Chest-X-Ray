@@ -11,12 +11,11 @@ import torch.backends.cudnn as cudnn
 import torchvision
 import torchvision.transforms as transforms
 
-from utils import train, evaluate
+from utils import train, evaluate#, getprob
 from plots import plot_learning_curves, plot_confusion_matrix, plot_roc
 from dataset import CheXpertDataSet
 from models import DenseNet121
 from scipy.special import softmax
-from sklearn.metrics import roc_auc_score
 
 cudnn.benchmark = True
 
@@ -25,15 +24,13 @@ if torch.cuda.is_available():
     torch.cuda.manual_seed(0)
 
 PATH_DIR = '../data'
-PATH_TRAIN = '../data/CheXpert-v1.0-small/data_train.csv'
-PATH_VALID = '../data/CheXpert-v1.0-small/data_valid.csv'
 PATH_TEST = '../data/CheXpert-v1.0-small/data_test.csv'
 PATH_OUTPUT = "../output/"
 os.makedirs(PATH_OUTPUT, exist_ok=True)
-MODEL_OUTPUT = 'model.pth.tar'
+
 
 NUM_EPOCHS = 6
-BATCH_SIZE = 32 # 32 is max for 224x224, 16 is max for 320x320, 280x280
+BATCH_SIZE = 32 # 32 is the max for our memory limitation
 USE_CUDA = True  # Set 'True' if you want to use GPU
 NUM_WORKERS = 8
 num_labels = 14
@@ -45,7 +42,7 @@ normalize = transforms.Normalize([0.485, 0.456, 0.406],
 
 transformseq=transforms.Compose([
                                     #transforms.Resize(size=(320, 320)),
-                                    # transforms.Resize(256),#smaller edge
+                                    #transforms.Resize(256),#smaller edge
                                     transforms.Resize(224),
                                     #transforms.RandomResizedCrop(224),
                                     transforms.CenterCrop(224),
@@ -56,77 +53,26 @@ transformseq=transforms.Compose([
                                     normalize
                                 ])
 
-train_dataset = CheXpertDataSet(data_dir=PATH_DIR, image_list_file=PATH_TRAIN, transform = transformseq)
-valid_dataset = CheXpertDataSet(data_dir=PATH_DIR, image_list_file=PATH_VALID, transform = transformseq)
 test_dataset = CheXpertDataSet(data_dir=PATH_DIR, image_list_file=PATH_TEST, transform = transformseq)
 
-# train shuffle=True
-train_loader = DataLoader(dataset=train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS, pin_memory=True)
-valid_loader = DataLoader(dataset=valid_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS, pin_memory=True)
 test_loader = DataLoader(dataset=test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS, pin_memory=True)
+
 print('Data Loaded')
 
-model = DenseNet121(num_labels)
-# mean of nn.CrossEntropyLoss() on each label, where nn.CrossEntropyLoss() include softmax & cross entropy, it is faster and stabler than cross entropy
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=1e-4)
-scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=0.1)
-
-
-if torch.cuda.device_count() > 1:
-    print("Use", torch.cuda.device_count(), "GPUs")
-    model = nn.DataParallel(model)
-
 device = torch.device("cuda" if torch.cuda.is_available() and USE_CUDA else "cpu")
-model.to(device)
 criterion.to(device)
 
-PATH_MODEL = os.path.join(PATH_OUTPUT, "MyCNN.pth")
-if os.path.isfile(PATH_MODEL):
-    model = torch.load(PATH_MODEL)
-    print('Saved model loaded')
-
-# train
-best_val_loss = 1000000
-train_losses = []
-valid_losses = []
-for epoch in range(NUM_EPOCHS):
-    #scheduler.step() # no decay in the first step
-    print('Learning rate in epoch:', epoch)
-    for param_group in optimizer.param_groups:
-        print(param_group['lr'])
-    train_loss = train(model, device, train_loader, criterion, optimizer, epoch)
-    valid_loss, valid_results = evaluate(model, device, valid_loader, criterion)
-    train_losses.append(train_loss)
-    valid_losses.append(valid_loss)
-
-    is_best = valid_loss < best_val_loss  # let's keep the model that has the best loss, but you can also use another metric.
-    if is_best:
-        best_val_loss = valid_loss
-        torch.save(model, os.path.join(PATH_OUTPUT, "MyCNN.pth"))
-
-print('Training finished, model saved')
-
-# save data of learning curves
-df_learning = pd.DataFrame(data = {'Train Loss':train_losses,'Valid Loss':valid_losses} )
-df_learning.index.name = 'Epoch'
-df_learning.to_csv(os.path.join(PATH_OUTPUT,'LearningCurves.csv'))
-
-# plot learning curves
-plot_learning_curves(train_losses, valid_losses)#, train_accuracies, valid_accuracies)
-
 # load best model
-best_model = torch.load(os.path.join(PATH_OUTPUT, "MyCNN.pth"))
-#test_loss, test_results = evaluate(best_model, device, test_loader, criterion)
+PATH_MODEL = os.path.join(PATH_OUTPUT, "MyCNN.pth")
+best_model = torch.load(PATH_MODEL)
+#test_results = getprob(best_model, device, test_loader)
 
-# plot confusion matrix 
 class_names = ['Negative', 'Positive', 'Uncertain']
 label_names = [ 'No Finding', 'Enlarged Cardiomediastinum', 'Cardiomegaly', 'Lung Opacity', 'Lung Lesion', 'Edema', 'Consolidation',
                 'Pneumonia', 'Atelectasis', 'Pneumothorax', 'Pleural Effusion', 'Pleural Other', 'Fracture', 'Support Devices']
-#for i, label_name in enumerate(label_names): # i th observation
-#    plot_confusion_matrix(test_results, class_names, i, label_name)
 
-
+#best_model_prob = torch.nn.Sequential(best_model, nn.Softmax(dim = -1))
 # convert output to positive probability
 def predict_positive(model, device, data_loader):
     model.eval()
@@ -156,4 +102,35 @@ def predict_positive(model, device, data_loader):
     return targets, probas
 
 test_targets, test_probs = predict_positive(best_model, device, test_loader)
-plot_roc(test_targets, test_probs, label_names)
+
+print(len(test_dataset))
+print(len(test_targets))
+
+# predict by patients
+df_test = pd.read_csv(PATH_TEST)
+ids = df_test['Path'].copy().values
+for i, id in enumerate(ids):
+    ids[i] = id[33:38]
+
+test_targets_patients, test_probs_patients = [], []
+i = 0
+while i < len(ids):
+    j = i+1
+    target = test_targets[i]
+    while (j < len(ids)) and (ids[i] == ids[j]):
+        j += 1
+    # j is the 1st index of next patient
+    # collect studies of the same patient
+    y_pred = np.mean(test_probs[i:j], axis = 0) # here mean has better AUC than max
+    test_targets_patients.append(target)
+    test_probs_patients.append(y_pred)
+    i = j
+
+test_targets_patients = np.array(test_targets_patients)
+test_probs_patients = np.array(test_probs_patients)
+
+print(len(test_targets_patients))
+print(len(test_probs_patients))
+plot_roc(test_targets_patients, test_probs_patients, label_names)
+
+#best_model_prob = torch.nn.Sequential(best_model, nn.Softmax(dim = -1))
