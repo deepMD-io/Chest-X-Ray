@@ -6,4 +6,5 @@
 *.tex
 CheXpert-v1.0-small/train/
 CheXpert-v1.0-small/valid/
-output_*/
+try.py
+
