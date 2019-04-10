@@ -45,7 +45,8 @@ normalize = transforms.Normalize([0.485, 0.456, 0.406],
 
 transformseq=transforms.Compose([
                                     #transforms.Resize(size=(320, 320)),
-                                    transforms.Resize(256),
+                                    #transforms.Resize(256), # smaller edge
+                                    transforms.Resize(224),
                                     #transforms.RandomResizedCrop(224),
                                     transforms.CenterCrop(224),
                                     #transforms.CenterCrop(280),
