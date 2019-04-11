@@ -68,7 +68,9 @@ print('Data Loaded')
 
 model = DenseNet121(num_labels)
 # mean of nn.CrossEntropyLoss() on each label, where nn.CrossEntropyLoss() include softmax & cross entropy, it is faster and stabler than cross entropy
-criterion = nn.CrossEntropyLoss()
+# criterion = nn.CrossEntropyLoss()
+# nn.BCEWithLogitsLoss() include sigmoid & BCELoss(), it is faster and stabler than BCELoss
+criterion = nn.BCEWithLogitsLoss()
 optimizer = optim.Adam(model.parameters(), lr=1e-4)
 scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=0.1)
 
@@ -119,15 +121,15 @@ plot_learning_curves(train_losses, valid_losses)#, train_accuracies, valid_accur
 best_model = torch.load(os.path.join(PATH_OUTPUT, "MyCNN.pth"))
 #test_loss, test_results = evaluate(best_model, device, test_loader, criterion)
 
-# plot confusion matrix 
-class_names = ['Negative', 'Positive', 'Uncertain']
+#class_names = ['Negative', 'Positive', 'Uncertain']
 label_names = [ 'No Finding', 'Enlarged Cardiomediastinum', 'Cardiomegaly', 'Lung Opacity', 'Lung Lesion', 'Edema', 'Consolidation',
                 'Pneumonia', 'Atelectasis', 'Pneumothorax', 'Pleural Effusion', 'Pleural Other', 'Fracture', 'Support Devices']
+# plot confusion matrix 
 #for i, label_name in enumerate(label_names): # i th observation
 #    plot_confusion_matrix(test_results, class_names, i, label_name)
 
-
 # convert output to positive probability
+best_model = nn.Sequential(best_model, nn.Sigmoid()) # For Binary Classification
 def predict_positive(model, device, data_loader):
     model.eval()
     # return a List of probabilities
@@ -147,9 +149,9 @@ def predict_positive(model, device, data_loader):
 
             output = model(input) # num_batch x 14 x 3
             y_pred = output.detach().to('cpu').numpy()
-            y_pred = y_pred[:,:,:2] # drop uncertain
-            y_pred = softmax(y_pred, axis = -1)
-            y_pred = y_pred[:,:,1] # keep positive only
+            #y_pred = y_pred[:,:,:2] # drop uncertain
+            #y_pred = softmax(y_pred, axis = -1)
+            #y_pred = y_pred[:,:,1] # keep positive only
 
             probas = np.concatenate((probas, y_pred), axis=0) if len(probas) > 0 else y_pred
     

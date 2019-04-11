@@ -42,7 +42,7 @@ normalize = transforms.Normalize([0.485, 0.456, 0.406],
 
 transformseq=transforms.Compose([
                                     #transforms.Resize(size=(320, 320)),
-                                    #transforms.Resize(256), # smaller edge
+                                    #transforms.Resize(256),#smaller edge
                                     transforms.Resize(224),
                                     #transforms.RandomResizedCrop(224),
                                     transforms.CenterCrop(224),
@@ -55,7 +55,6 @@ transformseq=transforms.Compose([
 
 test_dataset = CheXpertDataSet(data_dir=PATH_DIR, image_list_file=PATH_TEST, transform = transformseq)
 
-print(test_dataset)
 test_loader = DataLoader(dataset=test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS, pin_memory=True)
 
 print('Data Loaded')
@@ -105,6 +104,8 @@ def predict_positive(model, device, data_loader):
 test_targets, test_probs = predict_positive(best_model, device, test_loader)
 #print(test_targets)
 
+print(len(test_dataset))
+print(len(test_targets))
 plot_roc(test_targets, test_probs, label_names)
 
 #best_model_prob = torch.nn.Sequential(best_model, nn.Softmax(dim = -1))

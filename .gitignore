@@ -7,4 +7,4 @@
 CheXpert-v1.0-small/train/
 CheXpert-v1.0-small/valid/
 code/try.py
-
+output_224recc_dense121_lr-4_e6/

@@ -66,7 +66,7 @@ criterion.to(device)
 # load best model
 PATH_MODEL = os.path.join(PATH_OUTPUT, "MyCNN.pth")
 best_model = torch.load(PATH_MODEL)
-#test_results = getprob(best_model, device, test_loader)
+
 
 class_names = ['Negative', 'Positive', 'Uncertain']
 label_names = [ 'No Finding', 'Enlarged Cardiomediastinum', 'Cardiomegaly', 'Lung Opacity', 'Lung Lesion', 'Edema', 'Consolidation',
@@ -74,6 +74,7 @@ label_names = [ 'No Finding', 'Enlarged Cardiomediastinum', 'Cardiomegaly', 'Lun
 
 #best_model_prob = torch.nn.Sequential(best_model, nn.Softmax(dim = -1))
 # convert output to positive probability
+best_model = nn.Sequential(best_model, nn.Sigmoid()) # For Binary Classification
 def predict_positive(model, device, data_loader):
     model.eval()
     # return a List of probabilities
@@ -89,13 +90,12 @@ def predict_positive(model, device, data_loader):
                 input = input.to(device)
             target = target.detach().to('cpu').numpy()
             targets = np.concatenate((targets, target), axis=0) if len(targets) > 0 else target
-            #target = target.to(device)
 
             output = model(input) # num_batch x 14 x 3
             y_pred = output.detach().to('cpu').numpy()
-            y_pred = y_pred[:,:,:2] # drop uncertain
-            y_pred = softmax(y_pred, axis = -1)
-            y_pred = y_pred[:,:,1] # keep positive only
+            # y_pred = y_pred[:,:,:2] # drop uncertain
+            # y_pred = softmax(y_pred, axis = -1)
+            # y_pred = y_pred[:,:,1] # keep positive only
 
             probas = np.concatenate((probas, y_pred), axis=0) if len(probas) > 0 else y_pred
     

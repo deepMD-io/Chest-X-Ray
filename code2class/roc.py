@@ -11,11 +11,11 @@ import torch.backends.cudnn as cudnn
 import torchvision
 import torchvision.transforms as transforms
 
-from utils import train, evaluate
-from plots import plot_learning_curves, plot_confusion_matrix
+from utils import train, evaluate#, getprob
+from plots import plot_learning_curves, plot_confusion_matrix, plot_roc
 from dataset import CheXpertDataSet
 from models import DenseNet121
-from sklearn.metrics import roc_auc_score
+from scipy.special import softmax
 
 cudnn.benchmark = True
 
@@ -41,8 +41,13 @@ normalize = transforms.Normalize([0.485, 0.456, 0.406],
                                  [0.229, 0.224, 0.225])
 
 transformseq=transforms.Compose([
-                                    transforms.Resize(256),
-                                    transforms.RandomResizedCrop(224),
+                                    #transforms.Resize(size=(320, 320)),
+                                    #transforms.Resize(256),#smaller edge
+                                    transforms.Resize(224),
+                                    #transforms.RandomResizedCrop(224),
+                                    transforms.CenterCrop(224),
+                                    #transforms.CenterCrop(280),
+                                    #transforms.CenterCrop(320), # padding
                                     transforms.RandomHorizontalFlip(),
                                     transforms.ToTensor(),
                                     normalize
@@ -50,7 +55,6 @@ transformseq=transforms.Compose([
 
 test_dataset = CheXpertDataSet(data_dir=PATH_DIR, image_list_file=PATH_TEST, transform = transformseq)
 
-print(test_dataset)
 test_loader = DataLoader(dataset=test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS, pin_memory=True)
 
 print('Data Loaded')
@@ -62,14 +66,47 @@ criterion.to(device)
 # load best model
 PATH_MODEL = os.path.join(PATH_OUTPUT, "MyCNN.pth")
 best_model = torch.load(PATH_MODEL)
-test_loss, test_results = evaluate(best_model, device, test_loader, criterion)
 
-# plot confusion matrix 
+
 class_names = ['Negative', 'Positive', 'Uncertain']
 label_names = [ 'No Finding', 'Enlarged Cardiomediastinum', 'Cardiomegaly', 'Lung Opacity', 'Lung Lesion', 'Edema', 'Consolidation',
                 'Pneumonia', 'Atelectasis', 'Pneumothorax', 'Pleural Effusion', 'Pleural Other', 'Fracture', 'Support Devices']
-for i, label_name in enumerate(label_names): # i th observation
-    plot_confusion_matrix(test_results, class_names, i, label_name)
+
+#best_model_prob = torch.nn.Sequential(best_model, nn.Softmax(dim = -1))
+# convert output to positive probability
+best_model = nn.Sequential(best_model, nn.Sigmoid()) # For Binary Classification
+def predict_positive(model, device, data_loader):
+    model.eval()
+    # return a List of probabilities
+    #input, target = zip(*data_loader)
+
+    probas = np.array([])
+    targets = np.array([])
+    with torch.no_grad():
+        for i, (input, target) in enumerate(data_loader):
+            if isinstance(input, tuple):
+                input = tuple([e.to(device) if type(e) == torch.Tensor else e for e in input])
+            else:
+                input = input.to(device)
+            target = target.detach().to('cpu').numpy()
+            targets = np.concatenate((targets, target), axis=0) if len(targets) > 0 else target
+
+            output = model(input) # num_batch x 14 x 3
+            y_pred = output.detach().to('cpu').numpy()
+            # y_pred = y_pred[:,:,:2] # drop uncertain
+            # y_pred = softmax(y_pred, axis = -1)
+            # y_pred = y_pred[:,:,1] # keep positive only
+
+            probas = np.concatenate((probas, y_pred), axis=0) if len(probas) > 0 else y_pred
+    
+    return targets, probas
+
+test_targets, test_probs = predict_positive(best_model, device, test_loader)
+#print(test_targets)
+
+print(len(test_dataset))
+print(len(test_targets))
+plot_roc(test_targets, test_probs, label_names)
 
 #best_model_prob = torch.nn.Sequential(best_model, nn.Softmax(dim = -1))
 
