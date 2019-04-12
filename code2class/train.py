@@ -159,4 +159,3 @@ def predict_positive(model, device, data_loader):
 
 test_targets, test_probs = predict_positive(best_model, device, test_loader)
 plot_roc(test_targets, test_probs, label_names)
-

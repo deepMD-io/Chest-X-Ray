@@ -56,4 +56,3 @@ data_test.to_csv(fn_out_test, index = False)
 
 print('Check records in total:')
 print(len(data_train) + len(data_valid) + len(data_test))
-

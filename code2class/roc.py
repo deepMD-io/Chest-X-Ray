@@ -109,4 +109,3 @@ print(len(test_targets))
 plot_roc(test_targets, test_probs, label_names)
 
 #best_model_prob = torch.nn.Sequential(best_model, nn.Softmax(dim = -1))
-
