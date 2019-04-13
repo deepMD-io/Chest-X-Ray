@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 # TODO: You can use other packages if you want, e.g., Numpy, Scikit-learn, etc.
 import numpy as np
 import os
-from sklearn.metrics import confusion_matrix, roc_curve, auc
+from sklearn.metrics import confusion_matrix, roc_curve, auc, precision_recall_curve
 from sklearn.utils.multiclass import unique_labels
 
 def plot_learning_curves(train_losses, valid_losses):#, train_accuracies, valid_accuracies):
