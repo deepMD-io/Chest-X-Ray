@@ -12,7 +12,7 @@ import torchvision
 import torchvision.transforms as transforms
 
 from utils import train, evaluate
-from plots import plot_learning_curves, plot_confusion_matrix, plot_roc
+from plots import plot_learning_curves, plot_confusion_matrix, plot_roc, plot_pr
 from dataset import CheXpertDataSet
 from models import DenseNet121
 from scipy.special import softmax
@@ -157,4 +157,5 @@ def predict_positive(model, device, data_loader):
 
 test_targets, test_probs = predict_positive(best_model, device, test_loader)
 plot_roc(test_targets, test_probs, label_names)
+plot_pr(test_targets, test_probs, label_names)
 
