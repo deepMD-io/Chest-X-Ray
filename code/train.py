@@ -88,7 +88,9 @@ print('Data Loaded')
 
 model = DenseNet121(num_labels)
 # mean of nn.CrossEntropyLoss() on each label, where nn.CrossEntropyLoss() include softmax & cross entropy, it is faster and stabler than cross entropy
-criterion = nn.CrossEntropyLoss()
+criterion = []
+for i in range(num_labels):
+    criterion.append(nn.CrossEntropyLoss(weight = weights[i]))
 optimizer = optim.Adam(model.parameters(), lr=1e-4)
 scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=0.1)
 
@@ -99,7 +101,8 @@ if torch.cuda.device_count() > 1:
 
 device = torch.device("cuda" if torch.cuda.is_available() and USE_CUDA else "cpu")
 model.to(device)
-criterion.to(device)
+for i in range(num_labels):
+    criterion[i].to(device)
 
 PATH_MODEL = os.path.join(PATH_OUTPUT, "MyCNN.pth")
 if os.path.isfile(PATH_MODEL):
@@ -115,8 +118,8 @@ for epoch in range(NUM_EPOCHS):
     print('Learning rate in epoch:', epoch)
     for param_group in optimizer.param_groups:
         print(param_group['lr'])
-    train_loss = train(model, device, train_loader, criterion, weights, optimizer, epoch)
-    valid_loss, valid_results = evaluate(model, device, valid_loader, criterion, weights)
+    train_loss = train(model, device, train_loader, criterion, optimizer, epoch)
+    valid_loss, valid_results = evaluate(model, device, valid_loader, criterion)
     train_losses.append(train_loss)
     valid_losses.append(valid_loss)
 

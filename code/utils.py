@@ -6,11 +6,10 @@ import torch.nn as nn
 from scipy.special import softmax
 
 
-def MultiLabelLoss(criterion, weights, output, target):
+def MultiLabelLoss(criterion, output, target):
 	loss, length = 0, target.size()[1] # output dims: 0 for sample, 1 for label, 2 for class	
 	for i in range(length):
-		criterion.weight = weights[i]
-		loss += criterion(output[:,i,:], target[:,i])
+		loss += criterion[i](output[:,i,:], target[:,i])
 
 	return loss/length
 
@@ -43,7 +42,7 @@ def compute_batch_accuracy(output, target):
 		return correct * 100.0 / batch_size
 
 
-def train(model, device, data_loader, criterion, weights, optimizer, epoch, print_freq=10):
+def train(model, device, data_loader, criterion, optimizer, epoch, print_freq=10):
 	batch_time = AverageMeter()
 	data_time = AverageMeter()
 	losses = AverageMeter()
@@ -64,7 +63,7 @@ def train(model, device, data_loader, criterion, weights, optimizer, epoch, prin
 
 		optimizer.zero_grad()
 		output = model(input) # num_batch x 14 x 3
-		loss = MultiLabelLoss(criterion, weights, output, target) # mean of CrossEntropyLoss() over 14 labels
+		loss = MultiLabelLoss(criterion, output, target) # mean of CrossEntropyLoss() over 14 labels
 		assert not np.isnan(loss.item()), 'Model diverged with loss = NaN'
 
 		loss.backward()
@@ -88,7 +87,7 @@ def train(model, device, data_loader, criterion, weights, optimizer, epoch, prin
 	return losses.avg#, accuracy.avg
 
 
-def evaluate(model, device, data_loader, criterion, weights, print_freq=10):
+def evaluate(model, device, data_loader, criterion, print_freq=10):
 	batch_time = AverageMeter()
 	losses = AverageMeter()
 	#accuracy = AverageMeter()
@@ -108,7 +107,7 @@ def evaluate(model, device, data_loader, criterion, weights, print_freq=10):
 			target = target.to(device)
 
 			output = model(input) # num_batch x 14 x 3
-			loss = MultiLabelLoss(criterion, weights, output, target) # mean of CrossEntropyLoss() over 14 labels
+			loss = MultiLabelLoss(criterion, output, target) # mean of CrossEntropyLoss() over 14 labels
 
 			# measure elapsed time
 			batch_time.update(time.time() - end)
