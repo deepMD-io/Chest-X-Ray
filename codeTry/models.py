@@ -14,26 +14,26 @@ class DenseNet121(nn.Module):
         super(DenseNet121, self).__init__()
         self.features = nn.Sequential(
             nn.Conv2d(in_channels=1, out_channels=32, kernel_size=7),
-            nn.Relu()
-            nn.MaxPool2d(kernel_size=2)
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2),
             nn.BatchNorm2d(32),
             nn.Dropout(p = 0.15),
 
             nn.Conv2d(32, 64, kernel_size=5),
-            nn.Relu()
-            nn.MaxPool2d(kernel_size=2)
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2),
             nn.BatchNorm2d(64),
             nn.Dropout(p = 0.15),
             
             nn.Conv2d(64, 128, kernel_size=3),
-            nn.Relu()
-            nn.MaxPool2d(kernel_size=2)
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2),
             nn.BatchNorm2d(128),
             nn.Dropout(p = 0.15),
             
             nn.Conv2d(128, 128, kernel_size=3),
-            nn.Relu()
-            nn.MaxPool2d(kernel_size=2)
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2),
             nn.BatchNorm2d(128),
             nn.Dropout(p = 0.15),
 
@@ -42,9 +42,10 @@ class DenseNet121(nn.Module):
           
         self.classifier = nn.Sequential(
             nn.Linear(128, 1000),
-            nn.Relu()
+            nn.ReLU(),
             nn.Linear(1000, num_labels),
         )
+
     def forward(self, x):
         x = self.features(x)
         x = x.view(x.size(0), -1)

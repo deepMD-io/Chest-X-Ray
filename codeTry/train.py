@@ -12,7 +12,7 @@ import torchvision
 import torchvision.transforms as transforms
 
 from utils import train, evaluate
-from plots import plot_learning_curves, plot_confusion_matrix, plot_roc
+from plots import plot_learning_curves, plot_confusion_matrix, plot_roc, plot_pr
 from dataset import CheXpertDataSet
 from models import DenseNet121
 from scipy.special import softmax
@@ -44,16 +44,17 @@ normalize = transforms.Normalize([0.485, 0.456, 0.406],
                                  [0.229, 0.224, 0.225])
 
 transformseq=transforms.Compose([
+                                    transforms.Resize(size=(224, 224)),
                                     #transforms.Resize(size=(320, 320)),
                                     # transforms.Resize(256),#smaller edge
-                                    transforms.Resize(224),
+                                    #transforms.Resize(224),
                                     #transforms.RandomResizedCrop(224),
-                                    transforms.CenterCrop(224),
+                                    #transforms.CenterCrop(224),
                                     #transforms.CenterCrop(280),
                                     #transforms.CenterCrop(320), # padding
-                                    transforms.RandomHorizontalFlip(),
-                                    transforms.ToTensor(),
-                                    normalize
+                                    #transforms.RandomHorizontalFlip(),
+                                    transforms.ToTensor()#,
+                                    #normalize
                                 ])
 
 train_dataset = CheXpertDataSet(data_dir=PATH_DIR, image_list_file=PATH_TRAIN, transform = transformseq)
@@ -71,8 +72,8 @@ model = DenseNet121(num_labels)
 # criterion = nn.CrossEntropyLoss()
 # nn.BCEWithLogitsLoss() include sigmoid & BCELoss(), it is faster and stabler than BCELoss
 criterion = nn.BCEWithLogitsLoss()
-optimizer = optim.Adam(model.parameters(), lr=1e-4)
-scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=0.1)
+optimizer = optim.Adam(model.parameters(), lr=1e-3)
+scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=3, gamma=0.1)
 
 
 if torch.cuda.device_count() > 1:
@@ -93,7 +94,7 @@ best_val_loss = 1000000
 train_losses = []
 valid_losses = []
 for epoch in range(NUM_EPOCHS):
-    #scheduler.step() # no decay in the first step
+    scheduler.step() # no decay in the first step
     print('Learning rate in epoch:', epoch)
     for param_group in optimizer.param_groups:
         print(param_group['lr'])
@@ -159,3 +160,5 @@ def predict_positive(model, device, data_loader):
 
 test_targets, test_probs = predict_positive(best_model, device, test_loader)
 plot_roc(test_targets, test_probs, label_names)
+plot_pr(test_targets, test_probs, label_names)
+
