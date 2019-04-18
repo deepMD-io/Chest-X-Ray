@@ -61,15 +61,15 @@ valid_dataset = CheXpertDataSet(data_dir=PATH_DIR, image_list_file=PATH_VALID, t
 test_dataset = CheXpertDataSet(data_dir=PATH_DIR, image_list_file=PATH_TEST, transform = transformseq)
 
 # count for pos_weight
-train_labels = np.array(train_dataset.labels)
-num_all = len(train_labels)
-pos_weight = []
-for i in range(np.shape(train_labels)[1]):
-    count_positive = np.sum(np.sign(train_labels[:,i])) # count positive(include uncertain) in i th label
-    count_negative = num_all - count_positive
-    pos_weight.append(count_negative/count_positive)
-print('Positive Weight')
-print(pos_weight)
+# train_labels = np.array(train_dataset.labels)
+# num_all = len(train_labels)
+# pos_weight = []
+# for i in range(np.shape(train_labels)[1]):
+#     count_positive = np.sum(np.sign(train_labels[:,i])) # count positive(include uncertain) in i th label
+#     count_negative = num_all - count_positive
+#     pos_weight.append(count_negative/count_positive)
+# print('Positive Weight')
+# print(pos_weight)
 
 # train shuffle=True
 train_loader = DataLoader(dataset=train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS, pin_memory=True)
@@ -81,7 +81,7 @@ model = DenseNet121(num_labels)
 # mean of nn.CrossEntropyLoss() on each label, where nn.CrossEntropyLoss() include softmax & cross entropy, it is faster and stabler than cross entropy
 # criterion = nn.CrossEntropyLoss()
 # nn.BCEWithLogitsLoss() include sigmoid & BCELoss(), it is faster and stabler than BCELoss
-criterion = nn.BCEWithLogitsLoss(pos_weight = torch.FloatTensor(pos_weight))
+criterion = nn.BCEWithLogitsLoss()#pos_weight = torch.FloatTensor(pos_weight))
 optimizer = optim.Adam(model.parameters(), lr=1e-4)
 scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=0.1)
 

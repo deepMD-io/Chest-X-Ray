@@ -60,6 +60,26 @@ train_dataset = CheXpertDataSet(data_dir=PATH_DIR, image_list_file=PATH_TRAIN, t
 valid_dataset = CheXpertDataSet(data_dir=PATH_DIR, image_list_file=PATH_VALID, transform = transformseq)
 test_dataset = CheXpertDataSet(data_dir=PATH_DIR, image_list_file=PATH_TEST, transform = transformseq)
 
+# find weights
+train_labels = np.array(train_dataset.labels)
+num_all = len(train_labels)
+weights = np.zeros((num_labels,3))
+for i in range(np.shape(train_labels)[1]):
+    count_negative = np.sum(train_labels[:,i] == 0)
+    count_positive = np.sum(train_labels[:,i] == 1) # count positive(include uncertain) in i th label
+    count_uncertain = np.sum(train_labels[:,i] == 2)
+
+    # weights, make the micro average = 1
+    weight_negative = num_all/3/count_negative if count_negative > 0 else 0
+    weight_positive = num_all/3/count_positive if count_positive > 0 else 0
+    weight_uncertain = num_all/3/count_uncertain if count_uncertain > 0 else 0
+
+    weights[i] = [weight_negative, weight_positive, weight_uncertain]
+
+weights = torch.FloatTensor(weights)
+print('Weights')
+print(weights)
+
 # train shuffle=True
 train_loader = DataLoader(dataset=train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS, pin_memory=True)
 valid_loader = DataLoader(dataset=valid_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS, pin_memory=True)
@@ -68,9 +88,11 @@ print('Data Loaded')
 
 model = DenseNet121(num_labels)
 # mean of nn.CrossEntropyLoss() on each label, where nn.CrossEntropyLoss() include softmax & cross entropy, it is faster and stabler than cross entropy
-criterion = nn.CrossEntropyLoss()
+criterion = []
+for i in range(num_labels):
+    criterion.append(nn.CrossEntropyLoss(weight = weights[i]))
 optimizer = optim.Adam(model.parameters(), lr=1e-4)
-scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=0.5)
+scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=0.1)
 
 
 if torch.cuda.device_count() > 1:
@@ -79,7 +101,8 @@ if torch.cuda.device_count() > 1:
 
 device = torch.device("cuda" if torch.cuda.is_available() and USE_CUDA else "cpu")
 model.to(device)
-criterion.to(device)
+for i in range(num_labels):
+    criterion[i].to(device)
 
 PATH_MODEL = os.path.join(PATH_OUTPUT, "MyCNN.pth")
 if os.path.isfile(PATH_MODEL):
@@ -158,3 +181,4 @@ def predict_positive(model, device, data_loader):
 test_targets, test_probs = predict_positive(best_model, device, test_loader)
 plot_roc(test_targets, test_probs, label_names)
 plot_pr(test_targets, test_probs, label_names)
+

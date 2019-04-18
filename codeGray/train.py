@@ -40,8 +40,8 @@ num_labels = 14
 
 # Data loading
 print('===> Loading entire datasets')
-normalize = transforms.Normalize([0.485, 0.456, 0.406],
-                                 [0.229, 0.224, 0.225])
+# normalize = transforms.Normalize([0.485, 0.456, 0.406],
+#                                  [0.229, 0.224, 0.225])
 
 transformseq=transforms.Compose([
                                     #transforms.Resize(size=(320, 320)),
@@ -52,8 +52,8 @@ transformseq=transforms.Compose([
                                     #transforms.CenterCrop(280),
                                     #transforms.CenterCrop(320), # padding
                                     transforms.RandomHorizontalFlip(),
-                                    transforms.ToTensor(),
-                                    normalize
+                                    transforms.ToTensor()#,
+                                    #normalize
                                 ])
 
 train_dataset = CheXpertDataSet(data_dir=PATH_DIR, image_list_file=PATH_TRAIN, transform = transformseq)
