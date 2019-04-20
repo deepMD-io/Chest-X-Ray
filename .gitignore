@@ -8,4 +8,6 @@ CheXpert-v1.0-small/train/
 CheXpert-v1.0-small/valid/
 code/try.py
 output_ours/
-
+code3classWeight/
+code3classGray/
+codeTry/

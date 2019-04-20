@@ -25,9 +25,9 @@ if torch.cuda.is_available():
     torch.cuda.manual_seed(0)
 
 PATH_DIR = '../data'
-PATH_TRAIN = '../data/CheXpert-v1.0-small/data_train.csv'
-PATH_VALID = '../data/CheXpert-v1.0-small/data_valid.csv'
-PATH_TEST = '../data/CheXpert-v1.0-small/data_test.csv'
+PATH_TRAIN = '../data/CheXpert-v1.0-small/train.csv'
+PATH_VALID = '../data/CheXpert-v1.0-small/valid.csv'
+PATH_TEST = '../data/CheXpert-v1.0-small/valid.csv'
 PATH_OUTPUT = "../output/"
 os.makedirs(PATH_OUTPUT, exist_ok=True)
 MODEL_OUTPUT = 'model.pth.tar'
@@ -169,6 +169,34 @@ def predict_positive(model, device, data_loader):
     return targets, probas
 
 test_targets, test_probs = predict_positive(best_model, device, test_loader)
-plot_roc(test_targets, test_probs, label_names)
-plot_pr(test_targets, test_probs, label_names)
+print(len(test_dataset))
+print(len(test_targets))
+
+# predict by studies
+df_test = pd.read_csv(PATH_TEST)
+ids = df_test['Path'].copy().values
+for i, id in enumerate(ids):
+    ids[i] = id[33:45] # include patient and study
+
+test_targets_studies, test_probs_studies = [], []
+i = 0
+while i < len(ids):
+    j = i+1
+    target = test_targets[i]
+    while (j < len(ids)) and (ids[i] == ids[j]):
+        j += 1
+    # j is the 1st index of next studies
+    # collect studies of the same studies
+    y_pred = np.max(test_probs[i:j], axis = 0)
+    test_targets_studies.append(target)
+    test_probs_studies.append(y_pred)
+    i = j
+
+test_targets_studies = np.array(test_targets_studies)
+test_probs_studies = np.array(test_probs_studies)
+
+print(len(test_targets_studies))
+print(len(test_probs_studies))
+plot_roc(test_targets_studies, test_probs_studies, label_names)
+plot_pr(test_targets_studies, test_probs_studies, label_names)
 

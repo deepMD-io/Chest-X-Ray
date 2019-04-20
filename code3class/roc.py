@@ -12,7 +12,7 @@ import torchvision
 import torchvision.transforms as transforms
 
 from utils import train, evaluate#, getprob
-from plots import plot_learning_curves, plot_confusion_matrix, plot_roc
+from plots import plot_learning_curves, plot_confusion_matrix, plot_roc, plot_pr
 from dataset import CheXpertDataSet
 from models import DenseNet121
 from scipy.special import softmax
@@ -24,7 +24,7 @@ if torch.cuda.is_available():
     torch.cuda.manual_seed(0)
 
 PATH_DIR = '../data'
-PATH_TEST = '../data/CheXpert-v1.0-small/data_test.csv'
+PATH_TEST = '../data/CheXpert-v1.0-small/valid.csv'
 PATH_OUTPUT = "../output/"
 os.makedirs(PATH_OUTPUT, exist_ok=True)
 
@@ -106,31 +106,32 @@ test_targets, test_probs = predict_positive(best_model, device, test_loader)
 print(len(test_dataset))
 print(len(test_targets))
 
-# predict by patients
+# predict by studies
 df_test = pd.read_csv(PATH_TEST)
 ids = df_test['Path'].copy().values
 for i, id in enumerate(ids):
-    ids[i] = id[33:38]
+    ids[i] = id[33:45] # include patient and study
 
-test_targets_patients, test_probs_patients = [], []
+test_targets_studies, test_probs_studies = [], []
 i = 0
 while i < len(ids):
     j = i+1
     target = test_targets[i]
     while (j < len(ids)) and (ids[i] == ids[j]):
         j += 1
-    # j is the 1st index of next patient
-    # collect studies of the same patient
-    y_pred = np.mean(test_probs[i:j], axis = 0) # here mean has better AUC than max
-    test_targets_patients.append(target)
-    test_probs_patients.append(y_pred)
+    # j is the 1st index of next studies
+    # collect studies of the same studies
+    y_pred = np.max(test_probs[i:j], axis = 0)
+    test_targets_studies.append(target)
+    test_probs_studies.append(y_pred)
     i = j
 
-test_targets_patients = np.array(test_targets_patients)
-test_probs_patients = np.array(test_probs_patients)
+test_targets_studies = np.array(test_targets_studies)
+test_probs_studies = np.array(test_probs_studies)
 
-print(len(test_targets_patients))
-print(len(test_probs_patients))
-plot_roc(test_targets_patients, test_probs_patients, label_names)
+print(len(test_targets_studies))
+print(len(test_probs_studies))
+plot_roc(test_targets_studies, test_probs_studies, label_names)
+plot_pr(test_targets_studies, test_probs_studies, label_names)
 
 #best_model_prob = torch.nn.Sequential(best_model, nn.Softmax(dim = -1))
