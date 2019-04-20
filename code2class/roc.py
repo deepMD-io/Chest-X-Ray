@@ -48,7 +48,7 @@ transformseq=transforms.Compose([
                                     transforms.CenterCrop(224),
                                     #transforms.CenterCrop(280),
                                     #transforms.CenterCrop(320), # padding
-                                    transforms.RandomHorizontalFlip(),
+                                    #transforms.RandomHorizontalFlip(),
                                     transforms.ToTensor(),
                                     normalize
                                 ])

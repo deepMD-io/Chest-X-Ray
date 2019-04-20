@@ -90,7 +90,7 @@ model = DenseNet121(num_labels)
 # nn.BCEWithLogitsLoss() include sigmoid & BCELoss(), it is faster and stabler than BCELoss
 criterion = nn.BCEWithLogitsLoss()#pos_weight = torch.FloatTensor(pos_weight))
 optimizer = optim.Adam(model.parameters(), lr=1e-4)
-scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=0.1)
+scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=3, gamma=0.1)
 
 
 if torch.cuda.device_count() > 1:
@@ -111,7 +111,7 @@ best_val_loss = 1000000
 train_losses = []
 valid_losses = []
 for epoch in range(NUM_EPOCHS):
-    #scheduler.step() # no decay in the first step
+    scheduler.step() # no decay in the first step
     print('Learning rate in epoch:', epoch)
     for param_group in optimizer.param_groups:
         print(param_group['lr'])

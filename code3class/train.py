@@ -104,7 +104,7 @@ best_val_loss = 1000000
 train_losses = []
 valid_losses = []
 for epoch in range(NUM_EPOCHS):
-    #scheduler.step() # no decay in the first step
+    scheduler.step() # no decay in the first step
     print('Learning rate in epoch:', epoch)
     for param_group in optimizer.param_groups:
         print(param_group['lr'])
