@@ -43,29 +43,36 @@ print('===> Loading entire datasets')
 normalize = transforms.Normalize([0.485, 0.456, 0.406],
                                  [0.229, 0.224, 0.225])
 
-transformseq=transforms.Compose([
+transformseqTrain=transforms.Compose([
                                     #transforms.Resize(size=(320, 320)),
                                     # transforms.Resize(256),#smaller edge
                                     transforms.Resize(224),
-                                    #transforms.RandomResizedCrop(224),
-                                    transforms.CenterCrop(224),
+                                    transforms.RandomResizedCrop(224),
+                                    #transforms.CenterCrop(224),
                                     #transforms.CenterCrop(280),
                                     #transforms.CenterCrop(320), # padding
-                                    transforms.RandomHorizontalFlip(),
+                                    #transforms.RandomHorizontalFlip(),
+                                    transforms.ToTensor(),
+                                    normalize
+                                ])
+transformseq=transforms.Compose([
+                                    transforms.Resize(224),
+                                    transforms.CenterCrop(224),
                                     transforms.ToTensor(),
                                     normalize
                                 ])
 
-train_dataset = CheXpertDataSet(data_dir=PATH_DIR, image_list_file=PATH_TRAIN, transform = transformseq)
+train_dataset = CheXpertDataSet(data_dir=PATH_DIR, image_list_file=PATH_TRAIN, transform = transformseqTrain)
 valid_dataset = CheXpertDataSet(data_dir=PATH_DIR, image_list_file=PATH_VALID, transform = transformseq)
 test_dataset = CheXpertDataSet(data_dir=PATH_DIR, image_list_file=PATH_TEST, transform = transformseq)
+
 
 # count for pos_weight
 # train_labels = np.array(train_dataset.labels)
 # num_all = len(train_labels)
 # pos_weight = []
 # for i in range(np.shape(train_labels)[1]):
-#     count_positive = np.sum(np.sign(train_labels[:,i])) # count positive(include uncertain) in i th label
+#     count_positive = np.sum(train_labels[:,i]) # count positive(include uncertain) in i th label
 #     count_negative = num_all - count_positive
 #     pos_weight.append(count_negative/count_positive)
 # print('Positive Weight')
@@ -135,6 +142,9 @@ best_model = torch.load(os.path.join(PATH_OUTPUT, "MyCNN.pth"))
 #class_names = ['Negative', 'Positive', 'Uncertain']
 label_names = [ 'No Finding', 'Enlarged Cardiomediastinum', 'Cardiomegaly', 'Lung Opacity', 'Lung Lesion', 'Edema', 'Consolidation',
                 'Pneumonia', 'Atelectasis', 'Pneumothorax', 'Pleural Effusion', 'Pleural Other', 'Fracture', 'Support Devices']
+label_names_0 = ['Cardiomegaly', 'Consolidation']
+label_names_1 = ['Atelectasis', 'Edema', 'Pleural Effusion']
+label_chexpert = ['Atelectasis', 'Cardiomegaly', 'Consolidation', 'Edema', 'Pleural Effusion']
 # plot confusion matrix 
 #for i, label_name in enumerate(label_names): # i th observation
 #    plot_confusion_matrix(test_results, class_names, i, label_name)

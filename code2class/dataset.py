@@ -10,12 +10,15 @@ class CheXpertDataSet(Dataset):
     def __init__(self, data_dir, image_list_file, transform=None):
         df = pd.read_csv(image_list_file)
         df = df.fillna(0)
+        label_names_0 = ['Cardiomegaly', 'Consolidation']
+        label_names_1 = ['Atelectasis', 'Edema', 'Pleural Effusion']
+        df[label_names_0] = 1 * (df[label_names_0] > 0) # convert uncertain -1 to negative 0
         self.transform = transform
         self.imagePaths = []
         self.labels = []
         for i, row in df.iterrows():
             self.imagePaths.append( os.path.join(data_dir,row['Path']) )
-            label = list(row[5:].values % 3) # use % 3 to replace -1 with 2, uncertain
+            label = list(np.abs(row[5:].values)) # convert uncertain -1 to positive 1
             self.labels.append(label)
 
 

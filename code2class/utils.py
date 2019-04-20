@@ -58,7 +58,7 @@ def train(model, device, data_loader, criterion, optimizer, epoch, print_freq=10
 			input = tuple([e.to(device) if type(e) == torch.Tensor else e for e in input])
 		else:
 			input = input.to(device)
-		target = np.sign(target) # convert uncertain(2) to positive(1)
+		#target = np.sign(target) # convert uncertain(2) to positive(1)
 		target = target.to(device)
 
 		optimizer.zero_grad()
@@ -104,7 +104,7 @@ def evaluate(model, device, data_loader, criterion, print_freq=10):
 				input = tuple([e.to(device) if type(e) == torch.Tensor else e for e in input])
 			else:
 				input = input.to(device)
-			target = np.sign(target) # convert uncertain(2) to positive(1)
+			#target = np.sign(target) # convert uncertain(2) to positive(1)
 			target = target.to(device)
 
 			output = model(input) # num_batch x 14

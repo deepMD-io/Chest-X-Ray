@@ -43,6 +43,19 @@ print('===> Loading entire datasets')
 normalize = transforms.Normalize([0.485, 0.456, 0.406],
                                  [0.229, 0.224, 0.225])
 
+transformseqTrain=transforms.Compose([
+                                    #transforms.Resize(size=(320, 320)),
+                                    # transforms.Resize(256),#smaller edge
+                                    transforms.Resize(224),
+                                    transforms.RandomResizedCrop(224),
+                                    #transforms.CenterCrop(224),
+                                    #transforms.CenterCrop(280),
+                                    #transforms.CenterCrop(320), # padding
+                                    #transforms.RandomHorizontalFlip(),
+                                    transforms.ToTensor(),
+                                    normalize
+                                ])
+
 transformseq=transforms.Compose([
                                     #transforms.Resize(size=(320, 320)),
                                     # transforms.Resize(256),#smaller edge
@@ -51,12 +64,12 @@ transformseq=transforms.Compose([
                                     transforms.CenterCrop(224),
                                     #transforms.CenterCrop(280),
                                     #transforms.CenterCrop(320), # padding
-                                    transforms.RandomHorizontalFlip(),
+                                    #transforms.RandomHorizontalFlip(),
                                     transforms.ToTensor(),
                                     normalize
                                 ])
 
-train_dataset = CheXpertDataSet(data_dir=PATH_DIR, image_list_file=PATH_TRAIN, transform = transformseq)
+train_dataset = CheXpertDataSet(data_dir=PATH_DIR, image_list_file=PATH_TRAIN, transform = transformseqTrain)
 valid_dataset = CheXpertDataSet(data_dir=PATH_DIR, image_list_file=PATH_VALID, transform = transformseq)
 test_dataset = CheXpertDataSet(data_dir=PATH_DIR, image_list_file=PATH_TEST, transform = transformseq)
 
@@ -70,7 +83,7 @@ model = DenseNet121(num_labels)
 # mean of nn.CrossEntropyLoss() on each label, where nn.CrossEntropyLoss() include softmax & cross entropy, it is faster and stabler than cross entropy
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=1e-4)
-scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=0.5)
+scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=3, gamma=0.1)
 
 
 if torch.cuda.device_count() > 1:
