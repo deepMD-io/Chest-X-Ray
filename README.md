@@ -67,8 +67,15 @@ we output ROC and PR for 14 observations
 
 
 ### Some AUC(ROC) Comparison:
+
+First Header | Second Header | Third Header
+------------ | ------------- | ------------
+Content Cell | Content Cell  | Content Cell
+Content Cell | Content Cell  | Content Cell
+
 				|			|						|	CheXpert 		|	CheXpert		|	Ours	|	Ours	|	Ours	|
 				|CheXNet	|	CheXNeXt			|	U-Ones			|	3-Class			|	U-Zeros	|	U-Ones	|	3-class |
+----------------|-----------|-----------------------|-------------------|-------------------|-----------|-----------|-----------|
 Atelectasis		|0.8094		|0.862(0.825–0.895)		|0.858(0.806,0.910) |0.821(0.763,0.879)	|			|	0.74	|	0.74	|
 Cardiomegaly	|0.9248		|0.831 (0.790–0.870) 	|0.832(0.773,0.890) |0.854(0.800,0.909)	|			|	0.87	|	0.87	|
 Consolidation	|0.7901		|0.893(0.859-0.924) 	|0.899(0.854,0.944) |0.937(0.905,0.969)	|			|	0.73	|	0.76	|
