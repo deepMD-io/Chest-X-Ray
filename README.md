@@ -70,20 +70,6 @@ we output ROC and PR for 14 observations
 
 
 
-I hate the table in markdown
-lets try
-
-| fk | omg |
-| -- | -- |
-| fk | omg |
-
-
-| wtf | wtf  |
-| -- | -- |
-| wtf | wtf  |
-
-
-
 | Type             | CheXNet |    CheXNet         |   CheXpert         | U-Zeros | U-Ones | 3-class |
 | ----             | ----    | ----               | ----               | ----    | ----   | ----    |
 | Atelectasis      | 0.8094  | 0.862(0.825–0.895) | 0.858(0.806,0.910) | 0.75    | 0.81   | 0.75    |
@@ -97,14 +83,14 @@ lets try
 
 
 ### Some AUC(PR) Comparison:
-Type			|CheXpert	|Ours	|Ours	|Ours	|
-Name			|Ensemble	|U-Zeros|U-Ones	|3-Class|
-----------------|-----------|-------|-------|-------|
-Atelectasis		|0.69		|		|0.38	|0.38	|
-Cardiomegaly	|0.81		|		|0.56	|0.57	|
-Consolidation	|0.44		|		|0.17	|0.21	|
-Edema			|0.66		|		|0.68	|0.67	|
-Pleural Effution|0.91		|		|0.86	|0.86	|
+
+| Type			   | CheXpert	| U-Zeros | U-Ones | 3-Class |
+| ---------------  | ---------- | ------- | ------ | ------  |
+| Atelectasis	   | 0.69		|		  | 0.38   | 0.38	 |
+| Cardiomegaly	   | 0.81		|		  | 0.56   | 0.57	 |
+| Consolidation	   | 0.44		|		  | 0.17   | 0.21	 |
+| Edema			   | 0.66		|		  | 0.68   | 0.67	 |
+| Pleural Effution | 0.91		|		  | 0.86   | 0.86	 |
 
 
 ## Implementation
