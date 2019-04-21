@@ -68,32 +68,29 @@ we output ROC and PR for 14 observations
 
 ### Some AUC(ROC) Comparison:
 
-First Header | Second Header | Third Header
------------- | ------------- | ------------
-Content Cell | Content Cell  | Content Cell
-Content Cell | Content Cell  | Content Cell
 
-				|			|						|	CheXpert 		|	CheXpert		|	Ours	|	Ours	|	Ours	|
-				|CheXNet	|	CheXNeXt			|	U-Ones			|	3-Class			|	U-Zeros	|	U-Ones	|	3-class |
-----------------|-----------|-----------------------|-------------------|-------------------|-----------|-----------|-----------|
-Atelectasis		|0.8094		|0.862(0.825–0.895)		|0.858(0.806,0.910) |0.821(0.763,0.879)	|			|	0.74	|	0.74	|
-Cardiomegaly	|0.9248		|0.831 (0.790–0.870) 	|0.832(0.773,0.890) |0.854(0.800,0.909)	|			|	0.87	|	0.87	|
-Consolidation	|0.7901		|0.893(0.859-0.924) 	|0.899(0.854,0.944) |0.937(0.905,0.969)	|			|	0.73	|	0.76	|
-Edema			|0.8878		|0.924(0.886-0.955) 	|0.941(0.903,0.980)	|0.928(0.887,0.968) |			|	0.87	|	0.87	|
-Pleural Effusion|0.8638		|0.901(0.868-0.930)		|0.934(0.901,0.967) |0.936(0.904,0.967)	|			|	0.90	|	0.90	|
-Pleural Other	|0.8062		|0.798(0.744-0.849)		|					|					|			|	0.80	|	0.81	|	
-Pneumonia		|0.7680		|0.851(0.781-0.911)		|					|					|			|	0.78	|	0.78	|	
-Pneumothorax	|0.8887		|0.944(0.915-0.969)		|					|					|			|	0.87	|	0.87	|	
+Type			|			|						|	CheXpert 		|	CheXpert		|Ours	|Ours	|Ours	|
+Name			|CheXNet	|	CheXNeXt			|	U-Ones			|	3-Class			|U-Zeros|U-Ones	|3-class|
+----------------|-----------|-----------------------|-------------------|-------------------|-------|-------|-------|
+Atelectasis		|0.8094		|0.862(0.825–0.895)		|0.858(0.806,0.910) |0.821(0.763,0.879)	|		|0.74	|0.74	|
+Cardiomegaly	|0.9248		|0.831 (0.790–0.870) 	|0.832(0.773,0.890) |0.854(0.800,0.909)	|		|0.87	|0.87	|
+Consolidation	|0.7901		|0.893(0.859-0.924) 	|0.899(0.854,0.944) |0.937(0.905,0.969)	|		|0.73	|0.76	|
+Edema			|0.8878		|0.924(0.886-0.955) 	|0.941(0.903,0.980)	|0.928(0.887,0.968) |		|0.87	|0.87	|
+Pleural Effusion|0.8638		|0.901(0.868-0.930)		|0.934(0.901,0.967) |0.936(0.904,0.967)	|		|0.90	|0.90	|
+Pleural Other	|0.8062		|0.798(0.744-0.849)		|					|					|		|0.80	|0.81	|	
+Pneumonia		|0.7680		|0.851(0.781-0.911)		|					|					|		|0.78	|0.78	|	
+Pneumothorax	|0.8887		|0.944(0.915-0.969)		|					|					|		|0.87	|0.87	|	
 
 
 ### Some AUC(PR) Comparison:
-							Ours	Ours		Ours
-				CheXpert	U-Zeros	U-Ones		3-Class
-Atelectasis		0.69				0.38		0.38
-Cardiomegaly	0.81				0.56		0.57
-Consolidation	0.44				0.17		0.21
-Edema			0.66				0.68		0.67
-Pleural Effution0.91				0.86		0.86
+Type			|			|Ours	|Ours	|Ours	|
+Name			|CheXpert	|U-Zeros|U-Ones	|3-Class|
+----------------|-----------|-------|-------|-------|
+Atelectasis		|0.69		|		|0.38	|0.38	|
+Cardiomegaly	|0.81		|		|0.56	|0.57	|
+Consolidation	|0.44		|		|0.17	|0.21	|
+Edema			|0.66		|		|0.68	|0.67	|
+Pleural Effution|0.91		|		|0.86	|0.86	|
 
 
 ## Implementation
