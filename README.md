@@ -86,11 +86,10 @@ we output ROC and PR for 14 observations
 |	Support Devices				|			|						|						|	0.92	|	0.94	|	0.93	|
 
 
-
 ### Some AUC(PR) Comparison:
 
 |	Type						|	CheXpert	|	U-Zeros	|	U-Ones	|	3-Class	|
-|	---------------				|	---------	|	-------	|	------	|	------	|
+|	--------					|	---------	|	-------	|	------	|	------	|
 |	Atelectasis					|	0.69		|	0.62	|	0.68	|	0.60	|
 |	Cardiomegaly				|	0.81		|	0.77	|	0.70	|	0.76	|
 |	Consolidation				|	0.44		|	0.52	|	0.44	|	0.51	|
@@ -105,6 +104,25 @@ we output ROC and PR for 14 observations
 |	Pleural Other				|				|	0.06	|	0.02	|	0.04	|	
 |	Fracture					|				|	NaN		|	NaN		|	NaN		|
 |	Support Devices				|				|	0.91	|	0.94	|	0.90	|
+
+### Uncertain Method Selection
+
+|	Type						|	2-Class		|	Combine		|	
+|	--------					|	---------	|	---------	|
+|	Atelectasis					|	U-Ones		|	U-Ones		|
+|	Cardiomegaly				|	U-Zeros		|	3-Class		|
+|	Consolidation				|	U-Zeros		|	3-Class		|
+|	Edema						|	U-Ones		|	U-Ones		|
+|	Pleural Effution			|	U-Ones		|	U-Ones		|
+|	No Finding					|	U-Zeros		|	3-Class		|
+|	Enlarged Cardiomediastinum	|	U-Zeros		|	U-Zeros		|
+|	Lung Opacity				|	U-Ones		|	U-Ones		|
+|	Lung Lesion					|	U-Ones		|	U-Ones		|
+|	Pneumonia					|	U-Zeros		|	U-Zeros		|
+|	Pneumothorax				|	U-Zeros		|	3-Class		|
+|	Pleural Other				|	U-Zeros		|	U-Zeros		|
+|	Fracture					|	U-Ones		|	3-Class		|
+|	Support Devices				|	U-Ones		|	U-Ones		|
 
 ## Implementation
 
