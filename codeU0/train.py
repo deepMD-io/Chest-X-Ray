@@ -32,7 +32,7 @@ PATH_OUTPUT = "../output/"
 os.makedirs(PATH_OUTPUT, exist_ok=True)
 MODEL_OUTPUT = 'model.pth.tar'
 
-NUM_EPOCHS = 6
+NUM_EPOCHS = 4
 BATCH_SIZE = 32 # 32 is max for 224x224, 16 is max for 320x320, 280x280
 USE_CUDA = True  # Set 'True' if you want to use GPU
 NUM_WORKERS = 8
@@ -47,8 +47,8 @@ transformseqTrain=transforms.Compose([
                                     #transforms.Resize(size=(320, 320)),
                                     # transforms.Resize(256),#smaller edge
                                     transforms.Resize(size=(224, 224)),
-                                    # transforms.Resize(224),
-                                    # transforms.RandomResizedCrop(224),
+                                    #transforms.Resize(224),
+                                    #transforms.RandomResizedCrop(224),
                                     #transforms.CenterCrop(224),
                                     #transforms.CenterCrop(280),
                                     #transforms.CenterCrop(320), # padding
@@ -56,9 +56,10 @@ transformseqTrain=transforms.Compose([
                                     transforms.ToTensor(),
                                     normalize
                                 ])
-
 transformseq=transforms.Compose([
                                     transforms.Resize(size=(224, 224)),
+                                    #transforms.Resize(224),
+                                    #transforms.CenterCrop(224),
                                     transforms.ToTensor(),
                                     normalize
                                 ])
@@ -66,6 +67,18 @@ transformseq=transforms.Compose([
 train_dataset = CheXpertDataSet(data_dir=PATH_DIR, image_list_file=PATH_TRAIN, transform = transformseqTrain)
 valid_dataset = CheXpertDataSet(data_dir=PATH_DIR, image_list_file=PATH_VALID, transform = transformseq)
 test_dataset = CheXpertDataSet(data_dir=PATH_DIR, image_list_file=PATH_TEST, transform = transformseq)
+
+
+# count for pos_weight
+# train_labels = np.array(train_dataset.labels)
+# num_all = len(train_labels)
+# pos_weight = []
+# for i in range(np.shape(train_labels)[1]):
+#     count_positive = np.sum(train_labels[:,i]) # count positive(include uncertain) in i th label
+#     count_negative = num_all - count_positive
+#     pos_weight.append(count_negative/count_positive)
+# print('Positive Weight')
+# print(pos_weight)
 
 # train shuffle=True
 train_loader = DataLoader(dataset=train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS, pin_memory=True)
@@ -75,9 +88,11 @@ print('Data Loaded')
 
 model = DenseNet121(num_labels)
 # mean of nn.CrossEntropyLoss() on each label, where nn.CrossEntropyLoss() include softmax & cross entropy, it is faster and stabler than cross entropy
-criterion = nn.CrossEntropyLoss()
+# criterion = nn.CrossEntropyLoss()
+# nn.BCEWithLogitsLoss() include sigmoid & BCELoss(), it is faster and stabler than BCELoss
+criterion = nn.BCEWithLogitsLoss()#pos_weight = torch.FloatTensor(pos_weight))
 optimizer = optim.Adam(model.parameters(), lr=1e-4)
-scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=3, gamma=0.1)
+scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=2, gamma=0.1)
 
 
 if torch.cuda.device_count() > 1:
@@ -126,15 +141,16 @@ plot_learning_curves(train_losses, valid_losses)#, train_accuracies, valid_accur
 best_model = torch.load(os.path.join(PATH_OUTPUT, "MyCNN.pth"))
 #test_loss, test_results = evaluate(best_model, device, test_loader, criterion)
 
-# plot confusion matrix 
-class_names = ['Negative', 'Positive', 'Uncertain']
+#class_names = ['Negative', 'Positive', 'Uncertain']
 label_names = [ 'No Finding', 'Enlarged Cardiomediastinum', 'Cardiomegaly', 'Lung Opacity', 'Lung Lesion', 'Edema', 'Consolidation',
                 'Pneumonia', 'Atelectasis', 'Pneumothorax', 'Pleural Effusion', 'Pleural Other', 'Fracture', 'Support Devices']
+abel_chexpert = ['Atelectasis', 'Cardiomegaly', 'Consolidation', 'Edema', 'Pleural Effusion']
+# plot confusion matrix 
 #for i, label_name in enumerate(label_names): # i th observation
 #    plot_confusion_matrix(test_results, class_names, i, label_name)
 
-
 # convert output to positive probability
+best_model = nn.Sequential(best_model, nn.Sigmoid()) # For Binary Classification
 def predict_positive(model, device, data_loader):
     model.eval()
     # return a List of probabilities
@@ -154,16 +170,15 @@ def predict_positive(model, device, data_loader):
 
             output = model(input) # num_batch x 14 x 3
             y_pred = output.detach().to('cpu').numpy()
-            y_pred = y_pred[:,:,:2] # drop uncertain
-            y_pred = softmax(y_pred, axis = -1)
-            y_pred = y_pred[:,:,1] # keep positive only
+            #y_pred = y_pred[:,:,:2] # drop uncertain
+            #y_pred = softmax(y_pred, axis = -1)
+            #y_pred = y_pred[:,:,1] # keep positive only
 
             probas = np.concatenate((probas, y_pred), axis=0) if len(probas) > 0 else y_pred
     
     return targets, probas
 
 test_targets, test_probs = predict_positive(best_model, device, test_loader)
-
 print(len(test_dataset))
 print(len(test_targets))
 
@@ -194,3 +209,4 @@ print(len(test_targets_studies))
 print(len(test_probs_studies))
 plot_roc(test_targets_studies, test_probs_studies, label_names)
 plot_pr(test_targets_studies, test_probs_studies, label_names)
+

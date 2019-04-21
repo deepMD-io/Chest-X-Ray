@@ -41,14 +41,7 @@ normalize = transforms.Normalize([0.485, 0.456, 0.406],
                                  [0.229, 0.224, 0.225])
 
 transformseq=transforms.Compose([
-                                    #transforms.Resize(size=(320, 320)),
-                                    #transforms.Resize(256),#smaller edge
-                                    transforms.Resize(224),
-                                    #transforms.RandomResizedCrop(224),
-                                    transforms.CenterCrop(224),
-                                    #transforms.CenterCrop(280),
-                                    #transforms.CenterCrop(320), # padding
-                                    #transforms.RandomHorizontalFlip(),
+                                    transforms.Resize(size=(224, 224)),
                                     transforms.ToTensor(),
                                     normalize
                                 ])

@@ -46,8 +46,9 @@ normalize = transforms.Normalize([0.485, 0.456, 0.406],
 transformseqTrain=transforms.Compose([
                                     #transforms.Resize(size=(320, 320)),
                                     # transforms.Resize(256),#smaller edge
-                                    transforms.Resize(224),
-                                    transforms.RandomResizedCrop(224),
+                                    transforms.Resize(size=(224, 224)),
+                                    #transforms.Resize(224),
+                                    #transforms.RandomResizedCrop(224),
                                     #transforms.CenterCrop(224),
                                     #transforms.CenterCrop(280),
                                     #transforms.CenterCrop(320), # padding
@@ -56,8 +57,9 @@ transformseqTrain=transforms.Compose([
                                     normalize
                                 ])
 transformseq=transforms.Compose([
-                                    transforms.Resize(224),
-                                    transforms.CenterCrop(224),
+                                    transforms.Resize(size=(224, 224)),
+                                    #transforms.Resize(224),
+                                    #transforms.CenterCrop(224),
                                     transforms.ToTensor(),
                                     normalize
                                 ])
@@ -90,7 +92,7 @@ model = DenseNet121(num_labels)
 # nn.BCEWithLogitsLoss() include sigmoid & BCELoss(), it is faster and stabler than BCELoss
 criterion = nn.BCEWithLogitsLoss()#pos_weight = torch.FloatTensor(pos_weight))
 optimizer = optim.Adam(model.parameters(), lr=1e-4)
-scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=3, gamma=0.1)
+scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=2, gamma=0.1)
 
 
 if torch.cuda.device_count() > 1:

@@ -113,7 +113,7 @@ def plot_roc(targets, probs, label_names):
 	roc_auc = dict()
 	font = {'size' : 10}
 	plt.rc('font', **font)
-	fig = plt.figure(figsize=(15,9))
+	fig = plt.figure(figsize=(21,6))
 	image_path = os.path.join(PATH_OUTPUT, 'ROC.png')
 	for i, label_name in enumerate(label_names): # i th observation
 		y_true = targets[:,i]
@@ -127,14 +127,17 @@ def plot_roc(targets, probs, label_names):
 		fpr[i], tpr[i], _ = roc_curve(y_true, y_score)
 		roc_auc[i] = auc(fpr[i], tpr[i])
 		
-		plt.subplot(3, 5, i+1)
+		plt.subplot(2, 7, i+1)
 		plt.plot(fpr[i], tpr[i], color='b', lw=2, label='ROC (AUC = %0.2f)' % roc_auc[i])
 		plt.plot([0, 1], [0, 1], 'r--')
 		plt.xlim([0, 1])
 		plt.ylim([0, 1.0])
-		plt.xlabel('False Positive Rate')
-		if i % 5 == 0:
+		if i >= 7:
+			plt.xlabel('False Positive Rate')
+		if i % 7 == 0:
 			plt.ylabel('True Positive Rate')
+		else:
+			plt.yticks([])
 		plt.title(label_name)
 		plt.legend(loc="lower right")
 	plt.tight_layout()
@@ -151,7 +154,7 @@ def plot_pr(targets, probs, label_names):
 	pr_auc = dict()
 	font = {'size' : 10}
 	plt.rc('font', **font)
-	fig = plt.figure(figsize=(15,9))
+	fig = plt.figure(figsize=(21,6))
 	image_path = os.path.join(PATH_OUTPUT, 'PR.png')
 	for i, label_name in enumerate(label_names): # i th observation
 		y_true = targets[:,i]
@@ -165,14 +168,17 @@ def plot_pr(targets, probs, label_names):
 		precision[i], recall[i], _ = precision_recall_curve(y_true, y_score)
 		pr_auc[i] = auc(recall[i], precision[i])
 		
-		plt.subplot(3, 5, i+1)
+		plt.subplot(2, 7, i+1)
 		plt.plot(recall[i], precision[i], color='b', lw=2, label='PR (AUC = %0.2f)' % pr_auc[i])
 		#plt.plot([0, 1], [0, 1], 'r--')
 		plt.xlim([0, 1])
 		plt.ylim([0, 1.0])
-		plt.xlabel('Recall')
-		if i % 5 == 0:
+		if i >=7:
+			plt.xlabel('Recall')
+		if i % 7 == 0:
 			plt.ylabel('Precision')
+		else:
+			plt.yticks([])
 		plt.title(label_name)
 		plt.legend(loc="best")
 	plt.tight_layout()
