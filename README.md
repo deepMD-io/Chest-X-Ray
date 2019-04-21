@@ -17,7 +17,7 @@ https://arxiv.org/abs/1705.02315  Wang, Xiaosong, Peng, Yifan, Lu, Le, Lu, Zhiyo
 
 
 #### Input:
-224x224 image, convert to RGB, random horizontal flip, normalized based on the mean and standard deviation of training dataset of ImageNet
+224x224 image, convert to RGB, normalized based on the mean and standard deviation of training dataset of ImageNet
 
 
 #### CNN Model:
@@ -32,7 +32,7 @@ Bottleneck Features:  1x1024
 dense layer: 14x3,  {p_0, p_1, p_2} on each label,  without Softmax(), since we use the loss function CrossEntropyLoss()
 
 Loss Function (14-label, 3-class):
-for 3 classes on each label, we use CrossEntropyLoss(), which includes Softmax(), Log() and NLLLoss(). Then we take the average over 14 labels.
+for 3 classes on each label, we use CrossEntropyLoss(), which includes Softmax(), Log() and NLLLoss(), where Log() and NLLLoss() return cross entropy. Then we take the average over 14 labels.
 
 Final Output: apply Softmax() on only {p_0, p_1}, then use p_1 as the output of each label.
 ——————————————————————————————
