@@ -74,10 +74,12 @@ I hate the table in markdown
 lets try
 
 | fk | omg |
+| -- | -- |
 | fk | omg |
 
 
 | wtf | wtf  |
+| -- | -- |
 | wtf | wtf  |
 
 
