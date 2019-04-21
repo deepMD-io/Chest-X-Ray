@@ -68,7 +68,7 @@ we output ROC and PR for 14 observations
 
 ### Some AUC(ROC) Comparison:
 
-|	Type						|	CheXNet	|	CheXNet				|   CheXpert			|	U-Zeros	|	U-Ones	|	3-Class	|
+|	Type						|	CheXNet	|	CheXNeXt				|   CheXpert			|	U-Zeros	|	U-Ones	|	3-Class	|
 |	----						|	----	|	----				|	----				|	----	|	----	|	----	|
 |	Atelectasis					|	0.8094	|	0.862(0.825–0.895)	|	0.858(0.806,0.910)	|	0.75	|	0.81	|	0.75	|
 |	Cardiomegaly				|	0.9248	|	0.831(0.790–0.870)	|	0.854(0.800,0.909)	|	0.84	|	0.79	|	0.85	|
