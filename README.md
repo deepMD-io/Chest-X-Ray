@@ -66,63 +66,63 @@ use 2-class {p_0, p_1}, there is no uncertain,
 we output ROC and PR for 14 observations
 
 
-### Some AUC(ROC) Comparison:
+### AUC(ROC) Comparison:
 
-|	Type						|	CheXNet	|	CheXNeXt			|   CheXpert			|	U-Zeros	|	U-Ones	|	3-Class	|
-|	----						|	----	|	----				|	----				|	----	|	----	|	----	|
-|	Atelectasis					|	0.8094	|	0.862(0.825–0.895)	|	0.858(0.806,0.910)	|	0.75	|	0.81	|	0.75	|
-|	Cardiomegaly				|	0.9248	|	0.831(0.790–0.870)	|	0.854(0.800,0.909)	|	0.84	|	0.79	|	0.85	|
-|	Consolidation				|	0.7901	|	0.893(0.859-0.924)	|	0.939(0.908,0.971)	|	0.86	|	0.86	|	0.87	|
-|	Edema						|	0.8878	|	0.924(0.886-0.955)	|	0.941(0.903,0.980)	|	0.93	|	0.93	|	0.93	|
-|	Pleural Effusion			|	0.8638	|	0.901(0.868-0.930)	|	0.936(0.904,0.967)	|	0.92	|	0.92	|	0.91	|
-|	No Finding					|			|						|						|	0.91	|	0.90	|	0.91	|
-|	Enlarged Cardiomediastinum	|			|						|						|	0.62	|	0.50	|	0.59	|
-|	Lung Opacity				|			|						|						|	0.92	|	0.92	|	0.91	|
-|	Lung Lesion					|			|						|						|	0.32	|	0.64	|	0.18	|
-|	Pneumonia					|	0.7680	|	0.851(0.781-0.911)	|						|	0.73	|	0.70	|	0.70	|	
-|	Pneumothorax				|	0.8887	|	0.944(0.915-0.969)	|						|	0.91	|	0.89	|	0.92	|
-|	Pleural Other				|	0.8062	|	0.798(0.744-0.849)	|						|	0.96	|	0.87	|	0.93	|	
-|	Fracture					|			|						|						|	NaN		|	NaN		|	NaN		|
-|	Support Devices				|			|						|						|	0.92	|	0.94	|	0.93	|
+| Type							| CheXNet	| CheXNeXt				|   CheXpert			| U-Zeros	| U-Ones	| 2-Class	| 3-Class	|
+| ----							| ----		| ----					| ----					| ----		| ----		| ----		| ----		|
+| Atelectasis					| 0.8094	| 0.862(0.825–0.895)	| 0.858(0.806,0.910)	| 0.75		| 0.81		| 0.82		| 0.75		|
+| Cardiomegaly					| 0.9248	| 0.831(0.790–0.870)	| 0.854(0.800,0.909)	| 0.84		| 0.79		| 0.82		| 0.85		|
+| Consolidation					| 0.7901	| 0.893(0.859-0.924)	| 0.939(0.908,0.971)	| 0.86		| 0.86		| 0.88		| 0.87		|
+| Edema							| 0.8878	| 0.924(0.886-0.955)	| 0.941(0.903,0.980)	| 0.93		| 0.93		| 0.94		| 0.93		|
+| Pleural Effusion				| 0.8638	| 0.901(0.868-0.930)	| 0.936(0.904,0.967)	| 0.92		| 0.92		| 0.93		| 0.91		|
+| No Finding					| 			| 						| 						| 0.91		| 0.90		| 0.91		| 0.91		|
+| Enlarged Cardiomediastinum	| 			| 						| 						| 0.62		| 0.50		| 0.59		| 0.59		|
+| Lung Opacity					| 			| 						| 						| 0.92		| 0.92		| 0.91		| 0.91		|
+| Lung Lesion					| 			| 						| 						| 0.32		| 0.64		| 0.83		| 0.18		|
+| Pneumonia						| 0.7680	| 0.851(0.781-0.911)	| 						| 0.73		| 0.70		| 0.80		| 0.70		| 
+| Pneumothorax					| 0.8887	| 0.944(0.915-0.969)	| 						| 0.91		| 0.89		| 0.91		| 0.92		|
+| Pleural Other					| 0.8062	| 0.798(0.744-0.849)	| 						| 0.96		| 0.87		| 0.92		| 0.93		|
+| Fracture						| 			| 						| 						| NaN		| NaN		| NaN		| NaN		|
+| Support Devices				| 			| 						| 						| 0.92		| 0.94		| 0.92		| 0.93		|
 
 
-### Some AUC(PR) Comparison:
+### AUC(PR) Comparison:
 
-|	Type						|	CheXpert	|	U-Zeros	|	U-Ones	|	3-Class	|
-|	--------					|	---------	|	-------	|	------	|	------	|
-|	Atelectasis					|	0.69		|	0.62	|	0.68	|	0.60	|
-|	Cardiomegaly				|	0.81		|	0.77	|	0.70	|	0.76	|
-|	Consolidation				|	0.44		|	0.52	|	0.44	|	0.51	|
-|	Edema						|	0.66		|	0.75	|	0.77	|	0.78	|
-|	Pleural Effution			|	0.91		|	0.86	|	0.86	|	0.85	|
-|	No Finding					|				|	0.44	|	0.49	|	0.50	|
-|	Enlarged Cardiomediastinum	|				|	0.65	|	0.55	|	0.60	|
-|	Lung Opacity				|				|	0.94	|	0.94	|	0.93	|
-|	Lung Lesion					|				|	0.00	|	0.01	|	0.00	|
-|	Pneumonia					|				|	0.09	|	0.09	|	0.10	|
-|	Pneumothorax				|				|	0.19	|	0.30	|	0.39	|
-|	Pleural Other				|				|	0.06	|	0.02	|	0.04	|	
-|	Fracture					|				|	NaN		|	NaN		|	NaN		|
-|	Support Devices				|				|	0.91	|	0.94	|	0.90	|
+| Type							| CheXpert	| U-Zeros	| U-Ones	| 2-Class	| 3-Class	|
+| --------						| ---------	| -------	| ------	| ------	| ------	|
+| Atelectasis					| 0.69		| 0.62		| 0.68		| 0.71		| 0.60		|
+| Cardiomegaly					| 0.81		| 0.77		| 0.70		| 0.75		| 0.76		|
+| Consolidation					| 0.44		| 0.52		| 0.44		| 0.53		| 0.51		|
+| Edema							| 0.66		| 0.75		| 0.77		| 0.82		| 0.78		|
+| Pleural Effution				| 0.91		| 0.86		| 0.86		| 0.87		| 0.85		|
+| No Finding					| 			| 0.44		| 0.49		| 0.43		| 0.50		|
+| Enlarged Cardiomediastinum	| 			| 0.65		| 0.55		| 0.62		| 0.60		|
+| Lung Opacity					| 			| 0.94		| 0.94		| 0.94		| 0.93		|
+| Lung Lesion					| 			| 0.00		| 0.01		| 0.01		| 0.00		|
+| Pneumonia						| 			| 0.09		| 0.09		| 0.13		| 0.10		|
+| Pneumothorax					| 			| 0.19		| 0.30		| 0.19		| 0.39		|
+| Pleural Other					| 			| 0.06		| 0.02		| 0.03		| 0.04		|
+| Fracture						| 			| NaN		| NaN		| NaN		| NaN		|
+| Support Devices				| 			| 0.91		| 0.94		| 0.90		| 0.90		|
 
 ### Uncertain Method Selection
 
-|	Type						|	2-Class		|	Combine		|	
-|	--------					|	---------	|	---------	|
-|	Atelectasis					|	U-Ones		|	U-Ones		|
-|	Cardiomegaly				|	U-Zeros		|	3-Class		|
-|	Consolidation				|	U-Zeros		|	3-Class		|
-|	Edema						|	U-Ones		|	U-Ones		|
-|	Pleural Effution			|	U-Ones		|	U-Ones		|
-|	No Finding					|	U-Zeros		|	3-Class		|
-|	Enlarged Cardiomediastinum	|	U-Zeros		|	U-Zeros		|
-|	Lung Opacity				|	U-Ones		|	U-Ones		|
-|	Lung Lesion					|	U-Ones		|	U-Ones		|
-|	Pneumonia					|	U-Zeros		|	U-Zeros		|
-|	Pneumothorax				|	U-Zeros		|	3-Class		|
-|	Pleural Other				|	U-Zeros		|	U-Zeros		|
-|	Fracture					|	U-Ones		|	3-Class		|
-|	Support Devices				|	U-Ones		|	U-Ones		|
+| Type							| 2-Class	| Combine	| 
+| --------						| ---------	| ---------	|
+| Atelectasis					| U-Ones	| U-Ones	|
+| Cardiomegaly					| U-Zeros	| 3-Class	|
+| Consolidation					| U-Zeros	| 3-Class	|
+| Edema							| U-Ones	| U-Ones	|
+| Pleural Effution				| U-Ones	| U-Ones	|
+| No Finding					| U-Zeros	| 3-Class	|
+| Enlarged Cardiomediastinum	| U-Zeros	| U-Zeros	|
+| Lung Opacity					| U-Ones	| U-Ones	|
+| Lung Lesion					| U-Ones	| U-Ones	|
+| Pneumonia						| U-Zeros	| U-Zeros	|
+| Pneumothorax					| U-Zeros	| 3-Class	|
+| Pleural Other					| U-Zeros	| U-Zeros	|
+| Fracture						| U-Ones	| 3-Class	|
+| Support Devices				| U-Ones	| U-Ones	|
 
 ## Implementation
 
