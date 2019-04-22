@@ -156,8 +156,12 @@ run train.py, model will be saved in ./output/
 
 ### Step 4
 If you just want to make the ROC, PR graph:
+
 modify "transforms" in roc.py to make it consistant with your model
+
 move model.pth into ./output/
+
 in ./code/
+
 run roc.py
 
