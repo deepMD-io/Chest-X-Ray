@@ -73,6 +73,38 @@ def plot_confusion_matrix(results, class_names, label_id, label_name):
 
 	plt.savefig(image_path)
 
+# def plot_roc(targets, probs, label_names):
+# 	PATH_OUTPUT = '../output/'
+# 	fpr = dict()
+# 	tpr = dict()
+# 	roc_auc = dict()
+# 	for i, label_name in enumerate(label_names): # i th observation
+# 		image_path = os.path.join(PATH_OUTPUT, 'ROC_'+label_name+'.png')
+# 		y_true = targets[:,i]
+# 		y_score = probs[:,i]
+
+# 		# drop uncertain
+# 		iwant = y_true < 2
+# 		y_true = y_true[iwant]
+# 		y_score = y_score[iwant]	
+		
+# 		fpr[i], tpr[i], _ = roc_curve(y_true, y_score)
+# 		roc_auc[i] = auc(fpr[i], tpr[i])
+
+		
+# 		plt.figure()
+# 		lw = 2
+# 		plt.plot(fpr[i], tpr[i], color='black',
+# 		         lw=lw, label='ROC curve (area = %0.2f)' % roc_auc[i])
+# 		plt.xlim([0.0, 1.0])
+# 		plt.ylim([0.0, 1.05])
+# 		plt.xlabel('False Positive Rate')
+# 		plt.ylabel('True Positive Rate')
+# 		plt.title(label_name)
+# 		plt.legend(loc="lower right")
+# 		plt.tight_layout()
+# 		plt.savefig(image_path)
+
 
 def plot_roc(targets, probs, label_names):
 	PATH_OUTPUT = '../output/'
@@ -155,44 +187,3 @@ def plot_pr(targets, probs, label_names):
 	fig_size[1] = 10
 	plt.rcParams["figure.figsize"] = fig_size
 	plt.savefig(image_path)
-
-# def plot_f1(targets, probs, label_names):
-# 	PATH_OUTPUT = '../output/'
-# 	precision = dict()
-# 	recall = dict()
-# 	f1 = dict()
-# 	font = {'size' : 10}
-# 	plt.rc('font', **font)
-# 	fig = plt.figure(figsize=(21,6))
-# 	image_path = os.path.join(PATH_OUTPUT, 'F1.png')
-# 	for i, label_name in enumerate(label_names): # i th observation
-# 		y_true = targets[:,i]
-# 		y_score = probs[:,i]
-
-# 		# drop uncertain
-# 		iwant = y_true < 2
-# 		y_true = y_true[iwant]
-# 		y_score = y_score[iwant]	
-		
-# 		precision[i], recall[i], _ = precision_recall_curve(y_true, y_score)
-# 		f1[i] = 2*recall[i]*precision[i]/(recall[i]+precision[i])
-		
-# 		plt.subplot(2, 7, i+1)
-# 		plt.plot(recall[i], f1[i], color='b', lw=2, label='F1 max = %0.2f' % np.max(f1[i]))
-# 		#plt.plot([0, 1], [0, 1], 'r--')
-# 		plt.xlim([0, 1])
-# 		plt.ylim([0, 1.0])
-# 		if i >=7:
-# 			plt.xlabel('Recall')
-# 		if i % 7 == 0:
-# 			plt.ylabel('F1')
-# 		else:
-# 			plt.yticks([])
-# 		plt.title(label_name)
-# 		plt.legend(loc="best")
-# 	plt.tight_layout()
-# 	fig_size = plt.rcParams["figure.figsize"]
-# 	fig_size[0] = 30
-# 	fig_size[1] = 10
-# 	plt.rcParams["figure.figsize"] = fig_size
-# 	plt.savefig(image_path)

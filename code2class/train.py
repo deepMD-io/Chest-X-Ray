@@ -12,9 +12,9 @@ import torchvision
 import torchvision.transforms as transforms
 
 from utils import train, evaluate
-from plots import plot_learning_curves, plot_confusion_matrix, plot_roc, plot_pr#, plot_f1
+from plots import plot_learning_curves, plot_confusion_matrix, plot_roc, plot_pr
 from dataset import CheXpertDataSet
-from models import DenseNet121
+from models import DenseNet121, Xception
 from scipy.special import softmax
 from sklearn.metrics import roc_auc_score
 
@@ -32,8 +32,8 @@ PATH_OUTPUT = "../output/"
 os.makedirs(PATH_OUTPUT, exist_ok=True)
 MODEL_OUTPUT = 'model.pth.tar'
 
-NUM_EPOCHS = 6
-BATCH_SIZE = 32 # 32 is max for 224x224, 16 is max for 320x320, 280x280
+NUM_EPOCHS = 4
+BATCH_SIZE = 16 # 32 is max for 224x224, 16 is max for 320x320, 280x280
 USE_CUDA = True  # Set 'True' if you want to use GPU
 NUM_WORKERS = 8
 num_labels = 14
@@ -44,9 +44,9 @@ normalize = transforms.Normalize([0.485, 0.456, 0.406],
                                  [0.229, 0.224, 0.225])
 
 transformseqTrain=transforms.Compose([
-                                    #transforms.Resize(size=(320, 320)),
-                                    # transforms.Resize(256),#smaller edge
-                                    transforms.Resize(size=(224, 224)),
+                                    transforms.Resize(size=(320, 320)),
+                                    #transforms.Resize(256),#smaller edge
+                                    #transforms.Resize(size=(224, 224)),
                                     #transforms.Resize(224),
                                     #transforms.RandomResizedCrop(224),
                                     #transforms.CenterCrop(224),
@@ -57,7 +57,8 @@ transformseqTrain=transforms.Compose([
                                     normalize
                                 ])
 transformseq=transforms.Compose([
-                                    transforms.Resize(size=(224, 224)),
+                                    transforms.Resize(size=(320, 320)),
+                                    #transforms.Resize(size=(224, 224)),
                                     #transforms.Resize(224),
                                     #transforms.CenterCrop(224),
                                     transforms.ToTensor(),
@@ -86,7 +87,8 @@ valid_loader = DataLoader(dataset=valid_dataset, batch_size=BATCH_SIZE, shuffle=
 test_loader = DataLoader(dataset=test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS, pin_memory=True)
 print('Data Loaded')
 
-model = DenseNet121(num_labels)
+model = Xception(num_labels)
+#model = DenseNet121(num_labels)
 # mean of nn.CrossEntropyLoss() on each label, where nn.CrossEntropyLoss() include softmax & cross entropy, it is faster and stabler than cross entropy
 # criterion = nn.CrossEntropyLoss()
 # nn.BCEWithLogitsLoss() include sigmoid & BCELoss(), it is faster and stabler than BCELoss
@@ -211,5 +213,5 @@ print(len(test_targets_studies))
 print(len(test_probs_studies))
 plot_roc(test_targets_studies, test_probs_studies, label_names)
 plot_pr(test_targets_studies, test_probs_studies, label_names)
-#plot_f1(test_targets_studies, test_probs_studies, label_names)
+
 

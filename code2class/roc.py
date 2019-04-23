@@ -12,7 +12,7 @@ import torchvision
 import torchvision.transforms as transforms
 
 from utils import train, evaluate#, getprob
-from plots import plot_learning_curves, plot_confusion_matrix, plot_roc, plot_pr#, plot_f1
+from plots import plot_learning_curves, plot_confusion_matrix, plot_roc, plot_pr
 from dataset import CheXpertDataSet
 from models import DenseNet121
 from scipy.special import softmax
@@ -41,8 +41,10 @@ normalize = transforms.Normalize([0.485, 0.456, 0.406],
                                  [0.229, 0.224, 0.225])
 
 transformseq=transforms.Compose([
-                                    transforms.Resize(size=(224, 224)),
+                                    transforms.Resize(size=(320, 320)),
+                                    #transforms.Resize(size=(224, 224)),
                                     #transforms.Resize(224),
+                                    #transforms.RandomResizedCrop(224),
                                     #transforms.CenterCrop(224),
                                     transforms.ToTensor(),
                                     normalize
@@ -128,6 +130,5 @@ print(len(test_targets_studies))
 print(len(test_probs_studies))
 plot_roc(test_targets_studies, test_probs_studies, label_names)
 plot_pr(test_targets_studies, test_probs_studies, label_names)
-#plot_f1(test_targets_studies, test_probs_studies, label_names)
 
 #best_model_prob = torch.nn.Sequential(best_model, nn.Softmax(dim = -1))
