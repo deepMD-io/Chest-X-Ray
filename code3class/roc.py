@@ -41,7 +41,8 @@ normalize = transforms.Normalize([0.485, 0.456, 0.406],
                                  [0.229, 0.224, 0.225])
 
 transformseq=transforms.Compose([
-                                    transforms.Resize(size=(224, 224)),
+                                    transforms.Resize(size=(320, 320)),
+                                    #transforms.Resize(size=(224, 224)),
                                     transforms.ToTensor(),
                                     normalize
                                 ])

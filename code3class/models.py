@@ -4,6 +4,26 @@ import torch.nn.functional as F
 import torchvision
 import numpy as np
 import pandas as pd
+import xception
+
+class Xception(nn.Module):
+    """Model modified.
+    The architecture of our model is the same as standard DenseNet121
+    except the classifier layer which has an additional sigmoid function.
+    """
+    def __init__(self, num_labels):
+        super(Xception, self).__init__()
+        self.xception = xception.xception(pretrained='imagenet') # input size >= 299x299
+        num_features = self.xception.num_classes # 1000
+        self.classifier = nn.Linear(num_features, num_labels*3)
+        self.num_labels = num_labels
+        self.num_classes = 3 # [p0, p1, p2] for each label
+
+    def forward(self, x):
+        x = self.xception(x)
+        x = self.classifier(x)
+        # we don't include sigmoid layer here
+        return x.reshape([len(x), self.num_labels, self.num_classes])
 
 class DenseNet121(nn.Module):
     """Model modified.

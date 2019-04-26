@@ -14,7 +14,7 @@ import torchvision.transforms as transforms
 from utils import train, evaluate
 from plots import plot_learning_curves, plot_confusion_matrix, plot_roc, plot_pr
 from dataset import CheXpertDataSet
-from models import DenseNet121
+from models import DenseNet121, Xception
 from scipy.special import softmax
 from sklearn.metrics import roc_auc_score
 
@@ -32,8 +32,8 @@ PATH_OUTPUT = "../output/"
 os.makedirs(PATH_OUTPUT, exist_ok=True)
 MODEL_OUTPUT = 'model.pth.tar'
 
-NUM_EPOCHS = 6
-BATCH_SIZE = 32 # 32 is max for 224x224, 16 is max for 320x320, 280x280
+NUM_EPOCHS = 3
+BATCH_SIZE = 16 # 32 is max for 224x224, 16 is max for 320x320, 280x280
 USE_CUDA = True  # Set 'True' if you want to use GPU
 NUM_WORKERS = 8
 num_labels = 14
@@ -44,9 +44,9 @@ normalize = transforms.Normalize([0.485, 0.456, 0.406],
                                  [0.229, 0.224, 0.225])
 
 transformseqTrain=transforms.Compose([
-                                    #transforms.Resize(size=(320, 320)),
+                                    transforms.Resize(size=(320, 320)),
                                     # transforms.Resize(256),#smaller edge
-                                    transforms.Resize(size=(224, 224)),
+                                    #transforms.Resize(size=(224, 224)),
                                     # transforms.Resize(224),
                                     # transforms.RandomResizedCrop(224),
                                     #transforms.CenterCrop(224),
@@ -58,7 +58,8 @@ transformseqTrain=transforms.Compose([
                                 ])
 
 transformseq=transforms.Compose([
-                                    transforms.Resize(size=(224, 224)),
+                                    transforms.Resize(size=(320, 320)),
+                                    #transforms.Resize(size=(224, 224)),
                                     transforms.ToTensor(),
                                     normalize
                                 ])
@@ -73,11 +74,11 @@ valid_loader = DataLoader(dataset=valid_dataset, batch_size=BATCH_SIZE, shuffle=
 test_loader = DataLoader(dataset=test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS, pin_memory=True)
 print('Data Loaded')
 
-model = DenseNet121(num_labels)
+model = Xception(num_labels)
 # mean of nn.CrossEntropyLoss() on each label, where nn.CrossEntropyLoss() include softmax & cross entropy, it is faster and stabler than cross entropy
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=1e-4)
-scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=3, gamma=0.1)
+scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=0.1)
 
 
 if torch.cuda.device_count() > 1:
