@@ -146,6 +146,11 @@ we output ROC and PR for 14 observations
 | Support Devices				| 			| 0.91		| 0.94		| 0.90		| 0.90		| 0.93		| 0.94		| 0.91			| 0.94			|
 
 
+## Challenges we met
+
+
+
+
 ## Implementation
 
 ### Step 1
