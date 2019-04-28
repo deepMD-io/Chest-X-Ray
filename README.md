@@ -197,14 +197,14 @@ To check the performance of the trained model, we only need: valid/ and valid.cs
 
 1. empty output/
 
-2.in ./code/, run train.py, model will be saved in ../output/
+2. in ./code2class/, run train.py, model will be saved in ../output/
 
 #### To check the performance of a trained model:
 
-1. move the model file ?.pth into output/
+1. if ./output/ is empty, move a model file ?.pth into output/.  Currently, the MyCNN.pth in ./output/ is a 320x320 2 class Xception model.
 
-3. in ./code/, run roc.py, graphs (ROC, PR) will be saved in ../output/
+3. in ./code2class/, run roc.py, graphs (ROC, PR) will be saved in ../output/
 
-( make sure the "transforms" in roc.py is consistant with the trained model))
+( make sure the "transforms" in roc.py is consistant with the trained model. Here I did not upload the 3 class Xception, so you may not run roc.py in code3class)
 
 
