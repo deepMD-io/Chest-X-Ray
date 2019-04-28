@@ -59,6 +59,7 @@ Batch Size (based on the size of memory)
 #### Training Time
 for 224x224: ~0.6 hour / epoch
 for 320x320: ~1.3 hour / epoch
+while Xception is some kind of slower than Densenet121, and Fractalnet is much slower.
 
 
 #### ROC and PR in Valid dataset
@@ -148,6 +149,17 @@ we output ROC and PR for 14 observations
 
 ## Challenges we met
 
+1. We tried to use random crop and random horizontal flip in the data preprocessing, however the performance was worse than do nothing.
+Since random cropping might drop some important part of the images, and views from the front or from the back are actually different. While center cropping, padding zeros, and resizing to square got the similar performances, here we simply resized to square
+
+2. To reproduce the paper, we supposed to use 320x320 resolution in the begining. However, the limitation of computing resource made us decrease the resolution to 224x224 first. We spend most of the time on raising the performance under 224x224. After that, we modified our input to 320x320. One of the reason why we must use 320x320 is because the input size of Xception model must be larger than 299x299 (if we hard code the input size to 224x224 in Xception, then the pretrained model performs bad since it is pre-trained on ImageNet by 299x299 )
+
+3. A "mistake" we made was that we did prediction by each image, so the ROC performance was much worse than the paper. After we modified the prediction by each study (use the maximum if more than 1 images provided), the performance became similar with the paper
+
+4. In the valid dataset, there is only 0 or 1 positive case in Lung Lesion, Pleural Other, and Fracture. The uncertain choices we made on these 3 types are based on the models trained on a re-split dataset. The re-split process should split the dateset by patients, not studies
+
+5. We did not tune the Fractalnet too much, since it is very deep and costs a long time for training. But the results we got show that Xception and Densenet1212 perform much better than Fractalnet
+
 
 
 
@@ -183,15 +195,15 @@ To check the performance of the trained model, we only need: valid/ and valid.cs
 
 #### To train a new model:
 
-1.empty output/
+1. empty output/
 
 2.in ./code/, run train.py, model will be saved in ../output/
 
 #### To check the performance of a trained model:
 
-1.move the model file ?.pth into output/
+1. move the model file ?.pth into output/
 
-3.in ./code/, run roc.py, graphs (ROC, PR) will be saved in ../output/
+3. in ./code/, run roc.py, graphs (ROC, PR) will be saved in ../output/
 
 ( make sure the "transforms" in roc.py is consistant with the trained model))
 
