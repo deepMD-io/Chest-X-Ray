@@ -67,9 +67,9 @@ we output ROC and PR for 14 observations
 
 
 
-### AUC(ROC) Comparison 224x224:
+### AUC(ROC) Comparison 224x224, where U-Zeors/U-Ones label the uncertain as negative/positive:
 
-| Type							| U-Zeros	| U-Ones	| 2-Class	| 3-Class	|
+| Type							| U0		| U1		| 2-Class	| 3-Class	|
 | ----							| ----		| ----		| ----		| ----		|
 | Atelectasis					| 0.75		| 0.81		| 0.82		| 0.75		|
 | Cardiomegaly					| 0.84		| 0.79		| 0.82		| 0.85		|
@@ -87,63 +87,64 @@ we output ROC and PR for 14 observations
 | Support Devices				| 0.92		| 0.94		| 0.92		| 0.93		|
 
 
+### Uncertain Method Selection for 2-Class, based on comparison between U-Zeros and U-Ones
+
+| Type							| 2-Class	|
+| --------						| ---------	|
+| Atelectasis					| U-Ones	|
+| Cardiomegaly					| U-Zeros	|
+| Consolidation					| U-Zeros	|
+| Edema							| U-Ones	|
+| Pleural Effution				| U-Ones	|
+| No Finding					| U-Zeros	|
+| Enlarged Cardiomediastinum	| U-Zeros	|
+| Lung Opacity					| U-Ones	|
+| Lung Lesion					| U-Ones	|
+| Pneumonia						| U-Zeros	|
+| Pneumothorax					| U-Zeros	|
+| Pleural Other					| U-Zeros	|
+| Fracture						| U-Ones	|
+| Support Devices				| U-Ones	|
+
 
 ### AUC(ROC) Comparison 320x320:
 
-| Type							| CheXNet	| CheXNeXt				|   CheXpert			| 2-Class	| 3-Class	| Xception(2)	| Ensemble			|
-| ----							| ----		| ----					| ----					| ----		| ----		| ----			| ----				|
-| Atelectasis					| 0.8094	| 0.862(0.825–0.895)	| 0.858(0.806,0.910)	| 0.81		| 0.73		| 0.83			| 0.83				|
-| Cardiomegaly					| 0.9248	| 0.831(0.790–0.870)	| 0.854(0.800,0.909)	| 0.77		| 0.83		| 0.83			| 0.84				|
-| Consolidation					| 0.7901	| 0.893(0.859-0.924)	| 0.939(0.908,0.971)	| 0.91		| 0.85		| 0.94			| 0.94				|
-| Edema							| 0.8878	| 0.924(0.886-0.955)	| 0.941(0.903,0.980)	| 0.94		| 0.93		| 0.94			| 0.94				|
-| Pleural Effusion				| 0.8638	| 0.901(0.868-0.930)	| 0.936(0.904,0.967)	| 0.93		| 0.92		| 0.93			| 0.94				|
-| No Finding					| 			| 						| 						| 0.89		| 0.90		| 0.89			|
-| Enlarged Cardiomediastinum	| 			| 						| 						| 0.54		| 0.57		| 0.51			|
-| Lung Opacity					| 			| 						| 						| 0.93		| 0.92		| 0.92			|
-| Lung Lesion					| 			| 						| 						| 0.77		| 0.47		| 0.21			|
-| Pneumonia						| 0.7680	| 0.851(0.781-0.911)	| 						| 0.72		| 0.77		| 0.72			|
-| Pneumothorax					| 0.8887	| 0.944(0.915-0.969)	| 						| 0.92		| 0.90		| 0.86			|
-| Pleural Other					| 0.8062	| 0.798(0.744-0.849)	| 						| 0.96		| 0.95		| 0.96			|
-| Fracture						| 			| 						| 						| NaN		| NaN		| NaN			|
-| Support Devices				| 			| 						| 						| 0.94		| 0.94		| 0.94			|
+| Type							| CheXNet	| CheXNeXt				|   CheXpert			| Densenet(2)	| Densenet(3)	| Xception(2)	| Xception(3)	|
+| ----							| ----		| ----					| ----					| ----			| ----			| ----			| ----			|
+| Atelectasis					| 0.8094	| 0.862(0.825–0.895)	| 0.858(0.806,0.910)	| 0.81			| 0.73			| 0.83			| 0.78			|
+| Cardiomegaly					| 0.9248	| 0.831(0.790–0.870)	| 0.854(0.800,0.909)	| 0.77			| 0.83			| 0.83			| 0.80			|
+| Consolidation					| 0.7901	| 0.893(0.859-0.924)	| 0.939(0.908,0.971)	| 0.91			| 0.85			| 0.94			| 0.92			|
+| Edema							| 0.8878	| 0.924(0.886-0.955)	| 0.941(0.903,0.980)	| 0.94			| 0.93			| 0.94			| 0.94			|
+| Pleural Effusion				| 0.8638	| 0.901(0.868-0.930)	| 0.936(0.904,0.967)	| 0.93			| 0.92			| 0.93			| 0.94			|
+| No Finding					| 			| 						| 						| 0.89			| 0.90			| 0.89			| 0.90			|
+| Enlarged Cardiomediastinum	| 			| 						| 						| 0.54			| 0.57			| 0.51			| 0.49			|
+| Lung Opacity					| 			| 						| 						| 0.93			| 0.92			| 0.92			| 0.92			|
+| Lung Lesion					| 			| 						| 						| 0.77			| 0.47			| 0.21			| 0.60			|
+| Pneumonia						| 0.7680	| 0.851(0.781-0.911)	| 						| 0.72			| 0.77			| 0.72			| 0.74			|
+| Pneumothorax					| 0.8887	| 0.944(0.915-0.969)	| 						| 0.92			| 0.90			| 0.86			| 0.94			|
+| Pleural Other					| 0.8062	| 0.798(0.744-0.849)	| 						| 0.96			| 0.95			| 0.96			| 0.98			|
+| Fracture						| 			| 						| 						| NaN			| NaN			| NaN			| NaN			|
+| Support Devices				| 			| 						| 						| 0.94			| 0.94			| 0.94			| 0.94			|
 
 ### AUC(PR) Comparison:
 
-| Type							| CheXpert	| U-Zeros	| U-Ones	| 2Class224 | 3Class224	| 2Class320 | 3Class320	| Xception(2)	|
-| --------						| ---------	| -------	| ------	| ------	| ------	| ------	| ------	| ----			|
-| Atelectasis					| 0.69		| 0.62		| 0.68		| 0.71		| 0.60		| 0.71		| 0.56		| 0.74			|
-| Cardiomegaly					| 0.81		| 0.77		| 0.70		| 0.75		| 0.76		| 0.69		| 0.72		| 0.74			|
-| Consolidation					| 0.44		| 0.52		| 0.44		| 0.53		| 0.51		| 0.63		| 0.51		| 0.69			|
-| Edema							| 0.66		| 0.75		| 0.77		| 0.82		| 0.78		| 0.81		| 0.74		| 0.82			|
-| Pleural Effution				| 0.91		| 0.86		| 0.86		| 0.87		| 0.85		| 0.87		| 0.84		| 0.87			|
-| No Finding					| 			| 0.44		| 0.49		| 0.43		| 0.50		| 0.43		| 0.45		| 0.41			|
-| Enlarged Cardiomediastinum	| 			| 0.65		| 0.55		| 0.62		| 0.60		| 0.55		| 0.59		| 0.55			|
-| Lung Opacity					| 			| 0.94		| 0.94		| 0.94		| 0.93		| 0.95		| 0.94		| 0.95			|
-| Lung Lesion					| 			| 0.00		| 0.01		| 0.01		| 0.00		| 0.01		| 0.00		| 0.00			|
-| Pneumonia						| 			| 0.09		| 0.09		| 0.13		| 0.10		| 0.09		| 0.11		| 0.10			|
-| Pneumothorax					| 			| 0.19		| 0.30		| 0.19		| 0.39		| 0.46		| 0.36		| 0.33			|
-| Pleural Other					| 			| 0.06		| 0.02		| 0.03		| 0.04		| 0.06		| 0.05		| 0.06			|
-| Fracture						| 			| NaN		| NaN		| NaN		| NaN		| NaN		| NaN		| NaN			|
-| Support Devices				| 			| 0.91		| 0.94		| 0.90		| 0.90		| 0.93		| 0.94		| 0.91			|
+| Type							| CheXpert	| U0-224	| U1-224	| Des(2)224	| Des(3)224	| Des(2)320 | Des(3)320	| Xception(2)	| Xception(3)	|
+| --------						| ---------	| -------	| ------	| ------	| ------	| ------	| ------	| ----			| ----			|
+| Atelectasis					| 0.69		| 0.62		| 0.68		| 0.71		| 0.60		| 0.71		| 0.56		| 0.74			| 0.64			|
+| Cardiomegaly					| 0.81		| 0.77		| 0.70		| 0.75		| 0.76		| 0.69		| 0.72		| 0.74			| 0.72			|
+| Consolidation					| 0.44		| 0.52		| 0.44		| 0.53		| 0.51		| 0.63		| 0.51		| 0.69			| 0.68			|
+| Edema							| 0.66		| 0.75		| 0.77		| 0.82		| 0.78		| 0.81		| 0.74		| 0.82			| 0.80			|
+| Pleural Effution				| 0.91		| 0.86		| 0.86		| 0.87		| 0.85		| 0.87		| 0.84		| 0.87			| 0.87			|
+| No Finding					| 			| 0.44		| 0.49		| 0.43		| 0.50		| 0.43		| 0.45		| 0.41			| 0.49			|
+| Enlarged Cardiomediastinum	| 			| 0.65		| 0.55		| 0.62		| 0.60		| 0.55		| 0.59		| 0.55			| 0.53			|
+| Lung Opacity					| 			| 0.94		| 0.94		| 0.94		| 0.93		| 0.95		| 0.94		| 0.95			| 0.94			|
+| Lung Lesion					| 			| 0.00		| 0.01		| 0.01		| 0.00		| 0.01		| 0.00		| 0.00			| 0.01			|
+| Pneumonia						| 			| 0.09		| 0.09		| 0.13		| 0.10		| 0.09		| 0.11		| 0.10			| 0.14			|
+| Pneumothorax					| 			| 0.19		| 0.30		| 0.19		| 0.39		| 0.46		| 0.36		| 0.33			| 0.37			|
+| Pleural Other					| 			| 0.06		| 0.02		| 0.03		| 0.04		| 0.06		| 0.05		| 0.06			| 0.10			|
+| Fracture						| 			| NaN		| NaN		| NaN		| NaN		| NaN		| NaN		| NaN			| NaN			|
+| Support Devices				| 			| 0.91		| 0.94		| 0.90		| 0.90		| 0.93		| 0.94		| 0.91			| 0.94			|
 
-### Uncertain Method Selection
-
-| Type							| 2-Class	| Combine	| 
-| --------						| ---------	| ---------	|
-| Atelectasis					| U-Ones	| U-Ones	|
-| Cardiomegaly					| U-Zeros	| 3-Class	|
-| Consolidation					| U-Zeros	| 3-Class	|
-| Edema							| U-Ones	| U-Ones	|
-| Pleural Effution				| U-Ones	| U-Ones	|
-| No Finding					| U-Zeros	| 3-Class	|
-| Enlarged Cardiomediastinum	| U-Zeros	| U-Zeros	|
-| Lung Opacity					| U-Ones	| U-Ones	|
-| Lung Lesion					| U-Ones	| U-Ones	|
-| Pneumonia						| U-Zeros	| U-Zeros	|
-| Pneumothorax					| U-Zeros	| 3-Class	|
-| Pleural Other					| U-Zeros	| U-Zeros	|
-| Fracture						| U-Ones	| 3-Class	|
-| Support Devices				| U-Ones	| U-Ones	|
 
 ## Implementation
 
@@ -153,6 +154,7 @@ in ./
 conda env create environment.yml
 
 conda activate chexpert
+
 
 ### Step 2
 in ./data/
@@ -169,20 +171,23 @@ unzip CheXpert-v1.0-small.zip, then ./data/ should be like this:
 
 modify the data path in datasplit.py, train.py if you need
 
+To check the performance of the trained model, we only need: valid/ and valid.csv
+
 
 ### Step 3
-in ./code/
 
-run train.py, model will be saved in ./output/
+#### To train a new model:
 
-### Step 4
-If you just want to make the ROC, PR graph:
+1.empty output/
 
-modify "transforms" in roc.py to make it consistant with your model
+2.in ./code/, run train.py, model will be saved in ../output/
 
-move model.pth into ./output/
+#### To check the performance of a trained model:
 
-in ./code/
+1.move the model file ?.pth into output/
 
-run roc.py
+3.in ./code/, run roc.py, graphs (ROC, PR) will be saved in ../output/
+
+( make sure the "transforms" in roc.py is consistant with the trained model))
+
 
