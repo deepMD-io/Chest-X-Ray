@@ -4,6 +4,7 @@
 *.jpg
 *.xlsx
 *.tex
+data/
 CheXpert-v1.0-small/train/
 CheXpert-v1.0-small/valid/
 code/try.py
